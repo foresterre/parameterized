@@ -1,0 +1,24 @@
+[package]
+name = "parameterized-macro"
+version = "0.1.0"
+authors = ["foresterre <garm@ilumeo.com>"]
+edition = "2018"
+license = "MIT OR Apache-2.0"
+description = "Run a single test with multiple different inputs"
+repository = "https://github.com/foresterre/parameterized"
+autotests = false
+
+[lib]
+proc-macro = true
+
+[[test]]
+name = "tests"
+path = "tests/cases.rs"
+
+[dependencies]
+proc-macro2 = "1"
+quote = "1"
+syn = { version = "1", features = ["full"] }
+
+[dev-dependencies]
+trybuild = "1.0"

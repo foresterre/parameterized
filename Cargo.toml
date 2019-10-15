@@ -1,0 +1,16 @@
+[package]
+name = "parameterized"
+version = "0.1.0"
+authors = ["foresterre <garm@ilumeo.com>"]
+edition = "2018"
+license = "MIT OR Apache-2.0"
+description = "Run a single test with multiple different inputs"
+repository = "https://github.com/foresterre/parameterized"
+documentation = "https://docs.rs/parameterized"
+readme = "README.md"
+
+[dependencies]
+parameterized-macro = { path = "macro" }
+
+[workspace]
+members = ["macro", "expand"]
