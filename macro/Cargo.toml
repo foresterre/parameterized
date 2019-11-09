@@ -1,12 +1,18 @@
 [package]
 name = "parameterized-macro"
 version = "0.1.0"
-authors = ["foresterre <garm@ilumeo.com>"]
+authors = ["Martijn Gribnau <garm@ilumeo.com>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
-description = "Run a single test with multiple different inputs"
+description = "Attribute macro crate for parameterized tests."
+documentation = "https://docs.rs/parameterized-macro"
 repository = "https://github.com/foresterre/parameterized"
+readme = "readme.md"
+keywords = ["parameterized", "attribute", "test", "unit-test", "junit"]
+categories = ["development-tools", "development-tools::testing"]
+
 autotests = false
+
 
 [lib]
 proc-macro = true
