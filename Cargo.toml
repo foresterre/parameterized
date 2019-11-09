@@ -1,16 +1,21 @@
 [package]
 name = "parameterized"
 version = "0.1.0"
-authors = ["foresterre <garm@ilumeo.com>"]
+authors = ["Martijn Gribnau <garm@ilumeo.com>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
-description = "Run a single test with multiple different inputs"
-repository = "https://github.com/foresterre/parameterized"
+description = "Procedural macro which allows you to define a test which can be run with multiple arguments. Test cases are defined using the 'parameterized' attribute instead of the 'test' attribute. This crate was inspired by JUnit's `@ParameterizedTest`."
 documentation = "https://docs.rs/parameterized"
+repository = "https://github.com/foresterre/parameterized"
 readme = "README.md"
+keywords = ["parameterized", "attribute", "test", "unit-test", "junit"]
+categories = ["development-tools", "development-tools::testing"]
+
+[badges]
+maintenance = { status = "actively-developed" }
 
 [dependencies]
-parameterized-macro = { path = "macro" }
+parameterized-macro = { path = "macro", version = "0.1" }
 
 [workspace]
 members = ["macro", "expand"]

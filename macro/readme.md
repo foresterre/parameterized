@@ -9,9 +9,9 @@ With this macro we generate the following code (1) from the given parameterized 
 ```rust
 // 0
 
-#[parameterized(values = {1, 2})]
-fn my_test(a: i32) {
-    assert!(a > 0)
+#[parameterized(a = {1, 2}, b = { "wanderlust", "wanderer" })]
+fn my_test(a: i32, b: &str) {
+    assert!(a > 0 && b.starts_with("w"))
 }
 ```
 
@@ -25,13 +25,15 @@ mod my_test {
     #[test]
     fn case_0() {
         let a: i32 = 1;
-        assert!(a > 0)
+        let b: &str = "wanderlust";
+        assert!(a > 0 && b.starts_with("w"))
     }
 
     #[test]
     fn case_1() {
         let a: i32 = 2;
-        assert!(a > 0)
+        let b: &str = "wanderer";
+        assert!(a > 0 && b.starts_with("w"))
     }
 }
 ```
@@ -51,9 +53,9 @@ More examples can be found in the `expand` crate, and the tests.
     Otherwise, if just `cargo test` is used, some generated test cases will run in an incorrect context setting.
 
 #### todo's and fixme's:
-- see 'fixme' in code comments, tests
+- see 'fixme' in code comments
 - see 'tests/todo' test cases
 
 - propagate other attributes to the generated test cases
 - use `heck` crate to fix casing
-- the current code base is a first version; the code is not particularly pretty.
+- the current code base is a first version; the code is not always particularly pretty.
