@@ -57,7 +57,7 @@ mod tests {
 
 <br>
 
-Additional examples can be found <a href="https://github.com/foresterre/parameterized-examples">here (parameterized-examples repo)
+Additional examples can be found <a href="https://github.com/foresterre/parameterized-examples">here</a> (parameterized-examples repo)
 and in the <a href="macro/tests">tests</a> folder.
 
 
