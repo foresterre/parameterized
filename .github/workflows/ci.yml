@@ -15,7 +15,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        build: [pinned, stable, nightly, macos, win-gnu, win-msvc]
+        build: [pinned, stable, macos, win-gnu, win-msvc] # excluded: nightly
         include:
           # pinned rust version :: ubuntu
           - build: pinned
@@ -28,9 +28,10 @@ jobs:
             rust: stable
 
           # latest rust nightly :: ubuntu
-          - build: nightly
-            os: ubuntu-latest
-            rust: nightly
+          # fixme: span of error position is different on nightly
+#          - build: nightly
+#            os: ubuntu-latest
+#            rust: nightly
 
           # latest rust stable :: mac_os
           - build: macos
