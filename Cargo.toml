@@ -10,6 +10,8 @@ repository = "https://github.com/foresterre/parameterized"
 readme = "README.md"
 keywords = ["parameterized", "attribute", "test", "unit-test", "junit"]
 categories = ["development-tools", "development-tools::testing"]
+
+[badges]
 maintenance = { status = "actively-developed" }
 
 [dependencies]
