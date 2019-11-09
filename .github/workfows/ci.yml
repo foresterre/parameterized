@@ -1,0 +1,90 @@
+# GitHub Actions workflow: CI for parameterized
+#
+# based on: https://github.com/BurntSushi/bstr/blob/master/.github/workflows/ci.yml
+# which is licensed under Apache License, Version 2.0 or MIT license
+
+name: "GitHub Actions: CI"
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+jobs:
+  test:
+    name: test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        build: [pinned, stable, nightly, macos, win-gnu, win-msvc]
+        include:
+          # pinned rust version :: ubuntu
+          - build: pinned
+            os: ubuntu-18.04
+            rust: 1.36.0
+
+          # latest rust stable :: ubuntu
+          - build: stable
+            os: ubuntu-latest
+            rust: stable
+
+          # latest rust nightly :: ubuntu
+          - build: nightly
+            os: ubuntu-latest
+            rust: nightly
+
+          # latest rust stable :: mac_os
+          - build: macos
+            os: macOS-latest
+            rust: stable
+
+          # latest rust stable :: windows + gnu
+          - build: win-gnu
+            os: windows-latest
+            rust: stable-x86_64-gnu
+
+          # latest rust stable :: windows + msvc
+          - build: win-msvc
+            os: windows-latest
+            rust: stable
+
+
+    steps:
+      # checkout
+      - name: checkout repository
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+
+      # install: rust
+      - name: install Rust
+        uses: hecrj/setup-rust-action@v1
+        with:
+          rust-version: ${{ matrix.rust }}
+
+      # build / doc / test
+      - name: build all workspace crates
+        run: cargo build --verbose --all
+
+      - name: "macro: all expected OK cases"
+        run: cargo test --package parameterized-macro --test tests expected_ok_all -- --exact
+
+      - name: "macro: all expected FAIL cases"
+        run: cargo test --package parameterized-macro --test tests expected_failures -- --exact
+
+  rustfmt:
+    name: rustfmt
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - name: Install Rust
+        uses: hecrj/setup-rust-action@v1
+        with:
+          rust-version: stable
+      - name: Install rustfmt
+        run: rustup component add rustfmt
+      - name: Check formatting
+        run: |
+          cargo fmt --all -- --check
