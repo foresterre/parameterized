@@ -1,11 +1,7 @@
-use proc_macro::Ident;
-use proc_macro2;
+use syn::braced;
 use syn::export::Formatter;
-use syn::parse::{Parse, ParseBuffer, ParseStream, Parser, Result};
+use syn::parse::{Parse, ParseStream, Result};
 use syn::punctuated::Punctuated;
-use syn::token::{Brace, Token};
-use syn::Attribute;
-use syn::{braced, Error};
 
 /// An ordered list of attribute arguments, which consists of (id, param-args) pairs.
 #[derive(Clone)]

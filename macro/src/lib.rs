@@ -1,5 +1,3 @@
-#![allow(warnings)] // TODO: remove
-
 #[macro_use]
 extern crate syn;
 extern crate proc_macro;
@@ -12,10 +10,8 @@ use quote::quote;
 use syn::parse_macro_input;
 use syn::spanned::Spanned;
 
-use attribute::AttributeArgList;
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::iter::FromIterator;
-use syn::token::Token;
 
 mod attribute;
 
@@ -85,7 +81,7 @@ pub fn parameterized(
     if !eq {
         let exprs_by_id: BTreeMap<syn::Ident, Vec<syn::Expr>> = BTreeMap::from_iter(exprs_by_id);
 
-        let mut ids: String = exprs_by_id
+        let ids: String = exprs_by_id
             .iter()
             .map(|(id, _)| format!("{}", id))
             .collect::<Vec<String>>()
@@ -96,7 +92,7 @@ pub fn parameterized(
 
     // step 3 impl
     if let Some(cases) = amount {
-        let test_case_fns = (0..cases).into_iter().map(|i| {
+        let test_case_fns = (0..cases).map(|i| {
             let binds: Vec<TokenStream> = func_args
                 .iter()
                 .map(|fn_arg| {
@@ -171,7 +167,7 @@ pub fn parameterized(
             }
         };
 
-        return token_stream.into();
+        token_stream.into()
     } else {
         panic!("Unable to construct parameterized test cases.");
     }
@@ -182,7 +178,7 @@ pub fn parameterized(
 fn equal_amount_of_expr(map: &HashMap<syn::Ident, Vec<syn::Expr>>) -> (bool, Option<usize>) {
     let mut max: Option<usize> = None;
 
-    for (_id, exprs) in map {
+    for exprs in map.values() {
         if let Some(current_max) = max {
             if current_max != exprs.len() {
                 return (false, max);
@@ -192,5 +188,5 @@ fn equal_amount_of_expr(map: &HashMap<syn::Ident, Vec<syn::Expr>>) -> (bool, Opt
         }
     }
 
-    return (true, max);
+    (true, max)
 }
