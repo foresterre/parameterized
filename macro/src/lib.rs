@@ -2,16 +2,15 @@
 extern crate syn;
 extern crate proc_macro;
 
-use std::sync::atomic::AtomicUsize;
-use std::sync::atomic::Ordering;
+use std::collections::{BTreeMap, HashMap, HashSet};
+use std::iter::FromIterator;
+use std::sync::atomic::{AtomicUsize, Ordering};
 
 use proc_macro2::TokenStream;
 use quote::quote;
+use syn::export::fmt::Display;
 use syn::parse_macro_input;
 use syn::spanned::Spanned;
-
-use std::collections::{BTreeMap, HashMap, HashSet};
-use std::iter::FromIterator;
 
 mod attribute;
 
@@ -77,116 +76,118 @@ pub fn parameterized(
         .collect();
 
     // step 2 impl
-    let (eq, amount) = equal_amount_of_expr(&exprs_by_id);
-    if !eq {
-        let exprs_by_id: BTreeMap<syn::Ident, Vec<syn::Expr>> = BTreeMap::from_iter(exprs_by_id);
-
-        let ids: String = exprs_by_id
-            .iter()
-            .map(|(id, _)| format!("{}", id))
-            .collect::<Vec<String>>()
-            .join(", ");
-
-        panic!("All inputs ({}) should have equal length.", ids)
-    }
+    let amount_of_test_cases = check_all_input_lengths(&exprs_by_id);
 
     // step 3 impl
-    if let Some(cases) = amount {
-        let test_case_fns = (0..cases).map(|i| {
-            let binds: Vec<TokenStream> = func_args
-                .iter()
-                .map(|fn_arg| {
-                    // we require an argument (name: Type) to be Typed ,
-                    // and not Receiver (a variant of self).
-                    if let syn::FnArg::Typed(pat) = fn_arg {
-                        let fn_expected_ty = &pat.ty;
-                        let fn_ident = pat.pat.as_ref();
+    let test_case_fns = (0..amount_of_test_cases).map(|i| {
+        let binds: Vec<TokenStream> = func_args
+            .iter()
+            .map(|fn_arg| {
+                // we require an argument (name: Type) to be Typed ,
+                // and not Receiver (a variant of self).
+                if let syn::FnArg::Typed(pat) = fn_arg {
+                    let fn_expected_ty = &pat.ty;
+                    let fn_ident = pat.pat.as_ref();
 
-                        // The following is a dance to obtain the actual identifier.
-                        if let syn::Pat::Ident(pat_ident) = fn_ident {
-                            let fn_arg_ident = &pat_ident.ident;
+                    // The following is a dance to obtain the actual identifier.
+                    if let syn::Pat::Ident(pat_ident) = fn_ident {
+                        let fn_arg_ident = &pat_ident.ident;
 
-                            // Now we use to identifier from the function signature to get the
-                            // current (i) test case we are creating.
-                            //
-                            // If we have `#[parameterized(chars = { 'a', 'b' }, ints = { 1, 2 }]
-                            // and the function signature is `fn my_test(chars: char, ints: i8) -> ()`
-                            //
-                            // then we will two test cases.
-                            //
-                            // The first test case will substitute (for your mental image,
-                            // because in reality it will create let bindings at the start of the
-                            // generated test function) the first expressions from the identified
-                            // argument lists, in this case from `chars`, `a` and from `ints`, `1`.
-                            // The second test case does the same
-                            if let Some(exprs) = exprs_by_id.get(&fn_arg_ident) {
-                                let expr = &exprs[i];
+                        // Now we use to identifier from the function signature to get the
+                        // current (i) test case we are creating.
+                        //
+                        // If we have `#[parameterized(chars = { 'a', 'b' }, ints = { 1, 2 }]
+                        // and the function signature is `fn my_test(chars: char, ints: i8) -> ()`
+                        //
+                        // then we will two test cases.
+                        //
+                        // The first test case will substitute (for your mental image,
+                        // because in reality it will create let bindings at the start of the
+                        // generated test function) the first expressions from the identified
+                        // argument lists, in this case from `chars`, `a` and from `ints`, `1`.
+                        // The second test case does the same
+                        if let Some(exprs) = exprs_by_id.get(&fn_arg_ident) {
+                            let expr = &exprs[i];
 
-                                // A let binding is constructed so we can type check the given expression.
-                                return quote! {
-                                    let #fn_arg_ident: #fn_expected_ty = #expr;
-                                };
-                            } else {
-                                // This should not be possible, since we check use as range exactly
-                                // the amount of cases and check that the input argument lists are
-                                // equal to one another.
-                                panic!("not enough test cases found, [this should never happen] ")
-                            }
+                            // A let binding is constructed so we can type check the given expression.
+                            return quote! {
+                                let #fn_arg_ident: #fn_expected_ty = #expr;
+                            };
                         } else {
-                            // This should also never happen. But perhaps it could, I'm not sure.
-                            panic!("Unable to find a parameter name...")
+                            // This should not be possible, since we check use as range exactly
+                            // the amount of cases and check that the input argument lists are
+                            // equal to one another.
+                            panic!("not enough test cases found, [this should never happen] ")
                         }
                     } else {
-                        // Idem, not sure whether this can even happen either.
-                        panic!("Malformed function input.")
+                        // This should also never happen. But perhaps it could, I'm not sure.
+                        panic!("Unable to find a parameter name...")
                     }
-                })
-                .collect(); // end of construction of let bindings
-
-            let next_id = generated_ident_id.fetch_add(1, Ordering::SeqCst);
-            let ident = format!("case_{}", next_id);
-            let ident = syn::Ident::new(ident.as_str(), func.span()); // fixme: span
-
-            quote! {
-                #[test]
-                #vis fn #ident() {
-                    #(#binds)*
-
-                    #body_block
+                } else {
+                    // Idem, not sure whether this can even happen either.
+                    panic!("Malformed function input.")
                 }
+            })
+            .collect(); // end of construction of let bindings
+
+        let next_id = generated_ident_id.fetch_add(1, Ordering::SeqCst);
+        let ident = format!("case_{}", next_id);
+        let ident = syn::Ident::new(ident.as_str(), func.span()); // fixme: span
+
+        quote! {
+            #[test]
+            #vis fn #ident() {
+                #(#binds)*
+
+                #body_block
             }
-        });
+        }
+    });
 
-        // we need to include `use super::*` since we put the test cases in a new module
-        let token_stream = quote! {
-            #[cfg(test)]
-            #vis mod #mod_ident {
-                use super::*;
+    // we need to include `use super::*` since we put the test cases in a new module
+    let token_stream = quote! {
+        #[cfg(test)]
+        #vis mod #mod_ident {
+            use super::*;
 
-                #(#test_case_fns)*
-            }
-        };
+            #(#test_case_fns)*
+        }
+    };
 
-        token_stream.into()
-    } else {
-        panic!("Unable to construct parameterized test cases.");
-    }
+    token_stream.into()
 }
 
-// fixme: this is not pretty, but at least it is a single pass
-// returns whether all lengths are equal, and if any expr exists, the amount (wrapped in an option)
-fn equal_amount_of_expr(map: &HashMap<syn::Ident, Vec<syn::Expr>>) -> (bool, Option<usize>) {
-    let mut max: Option<usize> = None;
-
-    for exprs in map.values() {
-        if let Some(current_max) = max {
-            if current_max != exprs.len() {
-                return (false, max);
+/// Checks whether all inputs have equal length.
+///
+/// All inputs should have equal lengths. Take for example the following example parameterized definition:
+/// `#[parameterized(v = { "a", "b", "c" }, w = { 1, 2 })]`
+/// Here the length of `v` is 3, while the length of `w` is 2.
+/// Since within individual constructed test cases, for all identifiers, values are matched one-by-one
+/// the first test shall define `"a"` and `1`, the second `"b"` and 2, but for the third case,
+/// a value for `v` exists (namely `"c"`), however no value to substitute for `w` exists.
+/// Therefore, no fully valid set of tests can be constructed from the parameterized definition.
+fn check_all_input_lengths(map: &HashMap<syn::Ident, Vec<syn::Expr>>) -> usize {
+    map.values()
+        .fold(None, |acc: Option<usize>, exprs| match acc {
+            Some(size) if size == exprs.len() => Some(size),
+            Some(_) => {
+                panic_on_inequal_length(map);
+                unreachable!()
             }
-        } else {
-            max = Some(exprs.len())
-        }
-    }
+            None => Some(exprs.len()),
+        })
+        .unwrap_or_default()
+}
 
-    (true, max)
+/// When this function gets invoked, it will construct an error message and then panic! with that message.
+fn panic_on_inequal_length<K: Ord + Display, V>(map: impl IntoIterator<Item = (K, V)>) {
+    let sorted_by_id: BTreeMap<K, V> = BTreeMap::from_iter(map);
+
+    let ids: String = sorted_by_id
+        .iter()
+        .map(|(id, _)| format!("{}", id))
+        .collect::<Vec<String>>()
+        .join(", ");
+
+    panic!("All inputs ({}) should have equal length.", ids)
 }
