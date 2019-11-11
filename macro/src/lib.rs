@@ -2,7 +2,7 @@
 extern crate syn;
 extern crate proc_macro;
 
-use std::collections::{BTreeMap, HashMap, HashSet};
+use std::collections::{BTreeMap, HashMap};
 use std::iter::FromIterator;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
@@ -58,15 +58,7 @@ pub fn parameterized(
     // - then append the body (block) of the fn
     //
 
-    // uniqueness test: are all identifiers in the attribute unique?
-    let mut set = HashSet::new();
-    if !args
-        .args
-        .iter()
-        .all(|list_of_arg| set.insert(list_of_arg.id.clone()))
-    {
-        panic!("Duplicate identifier found. Please use unique parameter names.")
-    }
+    let identifiers_defined = args.args.len();
 
     // step 1 impl
     let exprs_by_id: HashMap<syn::Ident, Vec<syn::Expr>> = args
@@ -74,6 +66,11 @@ pub fn parameterized(
         .iter()
         .map(|v| (v.id.clone(), v.param_args.iter().cloned().collect()))
         .collect();
+
+    // interlude: ensure that the parameterized test definition contain unique identifiers.
+    if exprs_by_id.len() != identifiers_defined {
+        panic!("Duplicate identifier(s) found. Please use unique parameter names.")
+    }
 
     // step 2 impl
     let amount_of_test_cases = check_all_input_lengths(&exprs_by_id);
