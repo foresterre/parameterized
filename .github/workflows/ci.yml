@@ -66,11 +66,8 @@ jobs:
       - name: build all workspace crates
         run: cargo build --verbose --all
 
-      - name: "macro: all expected OK cases"
-        run: cargo test --package parameterized-macro --test tests expected_ok_all -- --exact
-
-      - name: "macro: all expected FAIL cases"
-        run: cargo test --package parameterized-macro --test tests expected_failures -- --exact
+      - name: "run all default features tests"
+        run: cargo test --all
 
   rustfmt:
     name: rustfmt
