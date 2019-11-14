@@ -15,7 +15,7 @@ categories = ["development-tools", "development-tools::testing"]
 maintenance = { status = "actively-developed" }
 
 [dependencies]
-parameterized-macro = { path = "macro", version = "0.1" }
+parameterized-macro = { path = "macro", version = "0.2" }
 
 [workspace]
 members = ["macro", "expand"]
