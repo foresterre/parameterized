@@ -30,6 +30,11 @@ fn individual_cases() {
     t.pass("tests/ok/12_enum_with_variant_value.rs");
     t.pass("tests/ok/13_import_rename.rs");
     t.pass("tests/ok/14_transitive_attr.rs");
+    t.pass("tests/ok/15_comment_in_test_case.rs");
+    t.pass("tests/ok/16_trailing_comma1.rs");
+    t.pass("tests/ok/17_trailing_comma2.rs");
+    t.pass("tests/ok/18_trailing_comma3.rs");
+    t.pass("tests/ok/19_trailing_comma4.rs");
 
     t.compile_fail("tests/fail/id_already_defined.rs");
     t.compile_fail("tests/fail/inequal_amount_of_arg.rs");
