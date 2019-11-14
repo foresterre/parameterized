@@ -29,6 +29,7 @@ pub fn parameterized(
     let vis = &func.vis;
     let func_args = &func.sig.inputs;
     let body_block = &func.block;
+    let attributes = &func.attrs;
 
     let mod_name = format!("{}", name);
     let mod_ident = syn::Ident::new(mod_name.as_str(), name.span());
@@ -53,9 +54,9 @@ pub fn parameterized(
     // step 3
     //
     // now we need to create test cases, one for each EXPR, consisting of:
-    // - `let #ident: #ty = #expr;` bind at the start of the fn, #ident is key of the map,
+    // * `let #ident: #ty = #expr;` bind at the start of the fn, #ident is key of the map,
     //      #ty is the matching fn param, #expr is the current expr
-    // - then append the body (block) of the fn
+    // * then append the body (block) of the fn
     //
 
     let identifiers_defined = args.args.len();
@@ -133,6 +134,7 @@ pub fn parameterized(
 
         quote! {
             #[test]
+            #(#attributes)*
             #vis fn #ident() {
                 #(#binds)*
 
