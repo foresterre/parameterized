@@ -29,6 +29,7 @@ fn individual_cases() {
     t.pass("tests/ok/11_enum.rs");
     t.pass("tests/ok/12_enum_with_variant_value.rs");
     t.pass("tests/ok/13_import_rename.rs");
+    t.pass("tests/ok/14_transitive_attr.rs");
 
     t.compile_fail("tests/fail/id_already_defined.rs");
     t.compile_fail("tests/fail/inequal_amount_of_arg.rs");
