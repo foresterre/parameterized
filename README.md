@@ -4,7 +4,34 @@ Procedural macro which allows you to define a test to be run with multiple (opti
 Test cases are defined using the 'parameterized' attribute instead of the 'test' attribute.
 This crate was inspired by JUnit `@ParameterizedTest`.
 
-## Example:
+### Examples:
+
+**Example: Add5**
+
+```rust
+fn add5<T: Into<u32>>(component: T) -> u32 {
+    component.into() + 5
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use parameterized::parameterized;
+
+    ide!();
+
+    #[parameterized(input = {
+        0, 1, 2
+    }, expected = {
+        5, 6, 7
+    })]
+    fn test_add5(input: u16, expected: u32) {
+        assert_eq!(add5(input), expected);
+    }
+}
+```
+
+**Example: Fruits**
 
 ```rust
 enum Fruit {
@@ -63,7 +90,48 @@ and in the <a href="macro/tests">tests</a> folder.
 
 <br>
 
-#### License
+### Imports
+
+If you prefer not to import this library with `use parameterized::parameterized;` in every test case, you can put
+the following snippet at the top of your crate root:
+```rust
+#[cfg(test)]
+#[macro_use]
+extern crate parameterized;
+```
+
+### IDE 'run test' intent
+
+IntelliJ IDEA recognizes test cases and provides context menu's which allow you to run tests within a certain scope
+(such as a module or a single test case). For example, in IntelliJ you can usually run individual test cases by clicking
+the ▶ icon in the gutter. Unfortunately, attribute macros are currently not expanded by `intellij-rust`.
+This means that the IDE will not recognize test cases generated as a result of attribute macros (such as the
+`parameterized` macro published by this crate). As a partial work around, you can create an empty test case which
+will mark the module as containing test cases and in the gutter you will find a ▶ icon next to the module. This allows
+you to run test cases per module. This crate provides a macro called `ide!()` which creates an empty test case for
+the above purpose.
+
+Note: `intellij-rust` does expand declarative macro's (at least with the new macro engine which can be
+selected in the 'settings' menu), such as this `ide!` macro.
+
+```rust
+#[cfg(test)]
+mod tests {
+    use parameterized::parameterized as pm;
+    use parameterized::ide;
+
+    ide!();
+
+    #[pm(input = { 2, 3, 4 }, output = { 4, 6, 8 })]
+    fn test_add2(input: i32, output: i32) {
+        let add2 = |receiver: i32| { receiver + 2 };
+
+        assert_eq(add2(input), output);
+    }
+}
+```
+
+### License
 
 Licensed under either of <a href="LICENSE-APACHE">Apache License, Version
 2.0</a> or <a href="LICENSE-MIT">MIT license</a> at your option.
