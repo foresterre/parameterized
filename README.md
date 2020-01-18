@@ -92,7 +92,7 @@ and in the <a href="macro/tests">tests</a> folder.
 
 ### Imports
 
-If you prefer not to import this library with `use parameterized::parameterized;` in every test case, you can put
+If you prefer not to import this library (with `use parameterized::parameterized;`) in every test module, you can put
 the following snippet at the top of your crate root:
 ```rust
 #[cfg(test)]
@@ -102,31 +102,78 @@ extern crate parameterized;
 
 ### IDE 'run test' intent
 
-IntelliJ IDEA recognizes test cases and provides context menu's which allow you to run tests within a certain scope
+IntelliJ IDEA recognizes test cases and provides context menus which allow you to run tests within a certain scope
 (such as a module or a single test case). For example, in IntelliJ you can usually run individual test cases by clicking
 the ▶ icon in the gutter. Unfortunately, attribute macros are currently not expanded by `intellij-rust`.
 This means that the IDE will not recognize test cases generated as a result of attribute macros (such as the
-`parameterized` macro published by this crate). As a partial work around, you can create an empty test case which
-will mark the module as containing test cases and in the gutter you will find a ▶ icon next to the module. This allows
-you to run test cases per module. This crate provides a macro called `ide!()` which creates an empty test case for
-the above purpose.
+`parameterized` macro published by this crate). 
 
-Note: `intellij-rust` does expand declarative macro's (at least with the new macro engine which can be
+Two workarounds are currently known (if you have a better solution, please feel free to open an issue; thank you in advance!).
+
+The first lets you add the `#[test]` attribute after the `#[parameterized(...)]` attribute. Because of parsing visibility,
+the parameterized attribute macro can't inspect any attribute defined before itself (thus attribute ordering matters for
+this workaround!).
+
+Two advantages of this approach over the second approach mentioned below are: we are not dependent on having an IDE
+which can expand declarative macros, and we don't need to stick our test cases into modules as to only run the tests
+cases for one parameterized test function.
+
+Thanks for the suggestion [Ivan Dubrov](https://github.com/foresterre/parameterized/issues/21#issuecomment-575834515)!
+
+```rust
+fn squared(input: i8) -> i8 {
+  input * input  
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use parameterized::parameterized as pm;
+
+    #[pm(input = {
+        -2, -1, 0, 1, 2
+    }, expected = {
+        4, 1, 0, 1, 4
+    })]
+    #[test] // <--
+    fn my_parameterized_test(input: i8, expected: i8) {
+        assert_eq!(squared(input), expected);
+    }
+}
+``` 
+
+Alternatively, you can create an empty test case which will mark the surrounding module as 'containing test cases'. In
+the gutter you will find the ▶ icon next to the module. This allows you to run test cases per module. This crate
+provides a macro called `ide!()` which creates an empty test case for the above purpose.
+
+Note: `intellij-rust` does expand declarative macro's (with the new macro engine which can be
 selected in the 'settings' menu), such as this `ide!` macro.
 
 ```rust
+fn squared(input: i8) -> i8 {
+  input * input  
+}
+
 #[cfg(test)]
 mod tests {
+    use super::*;
+
     use parameterized::parameterized as pm;
     use parameterized::ide;
+        
+    mod squared_tests { // <--
+        use super::*;
 
-    ide!();
-
-    #[pm(input = { 2, 3, 4 }, output = { 4, 6, 8 })]
-    fn test_add2(input: i32, output: i32) {
-        let add2 = |receiver: i32| { receiver + 2 };
-
-        assert_eq(add2(input), output);
+        ide!(); // <--
+    
+        #[pm(input = {
+            -2, -1, 0, 1, 2
+        }, expected = {
+            4, 1, 0, 1, 4
+        })]
+        fn test_squared(input: i8, output: i8) {
+            assert_eq(squared(input), output);
+        }
     }
 }
 ```
