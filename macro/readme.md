@@ -51,11 +51,3 @@ More examples can be found in the `expand` crate, and the tests.
 - Tests executed from the workspace crate should be run individually, e.g.
     (`cargo test --package parameterized-macro --test tests individual_cases -- --exact`).
     Otherwise, if just `cargo test` is used, some generated test cases will run in an incorrect context setting.
-
-#### todo's and fixme's:
-- see 'fixme' in code comments
-- see 'tests/todo' test cases
-
-- propagate other attributes to the generated test cases
-- use `heck` crate to fix casing
-- the current code base is a first version; the code is not always particularly pretty.
