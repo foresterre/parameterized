@@ -114,11 +114,11 @@ The first lets you add the `#[test]` attribute after the `#[parameterized(...)]`
 the parameterized attribute macro can't inspect any attribute defined before itself (thus attribute ordering matters for
 this workaround!).
 
-Two advantages of this approach over the second approach mentioned below are: we are not dependent on having an IDE
-which can expand declarative macros, and we don't need to stick our test cases into modules as to only run the tests
-cases for one parameterized test function.
-
-Thanks for the suggestion [Ivan Dubrov](https://github.com/foresterre/parameterized/issues/21#issuecomment-575834515)!
+An advantage of this approach over the second approach mentioned below is: we are not dependent on having an IDE
+which can expand declarative macros. A disadvantage may be that the IDE will show the ▶ icon next to the test case; and
+clicking on it may not produce the results which one would expect. The IDE may not receive the correct test intents, 
+or any intent at all. We are looking into finding a way to work around this in particular. In any case, thanks for the
+suggestion [Ivan Dubrov](https://github.com/foresterre/parameterized/issues/21#issuecomment-575834515).
 
 ```rust
 fn squared(input: i8) -> i8 {

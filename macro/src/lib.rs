@@ -168,10 +168,9 @@ pub fn parameterized(
 /// gutter functionality in Intellij IDEA) to annotate their test functions with both the
 /// parameterized attribute, and the test attribute. The test attribute has to be defined after
 /// the parameterized attribute!
-/// Two advantages of this approach over tricking the IDE by defining an declarative macro
-/// which defines an empty test case are: 1) we are not dependent on having an IDE which can expand
-/// declarative macros and 2) we don't need to stick our test cases into modules as to only run
-/// the test cases defined for that module.
+/// An advantages of this approach over tricking the IDE by defining an declarative macro
+/// which defines an empty test case is that we are not dependent on having an IDE which can expand
+/// declarative macros.
 ///
 ///
 /// An example:
@@ -193,9 +192,8 @@ pub fn parameterized(
 /// }
 /// ```
 ///
-/// Implementation based on [datatest](https://github.com/commure/datatest/blob/122f112705bbcbdbea430bf7cad0321d97d5fb4a/datatest-derive/src/lib.rs#L326-L335)
-///   which is licensed under the Apache-2.0 OR MIT license.
-/// Suggested by [Ivan Dubrov](https://github.com/foresterre/parameterized/issues/21#issuecomment-575834515).
+/// Implementation based on [datatest](https://github.com/commure/datatest/blob/122f112705bbcbdbea430bf7cad0321d97d5fb4a/datatest-derive/src/lib.rs#L326-L335),
+///   which is licensed under the Apache-2.0 OR MIT license. Suggested by [Ivan Dubrov](https://github.com/foresterre/parameterized/issues/21#issuecomment-575834515).
 fn remove_test_attribute(attributes: &mut Vec<syn::Attribute>) {
     attributes
         .into_iter()
