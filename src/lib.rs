@@ -17,8 +17,38 @@ pub use parameterized_macro::parameterized;
 macro_rules! ide {
     () => {
         #[test]
-        fn __mark_with_test_intent() {}
+        fn __() {}
     };
+}
+
+// proto 2
+
+#[macro_export]
+macro_rules! test_case {
+    (
+        $name:ident,
+        ( $( $id:ident : $ty:ty ),* ),
+        // values provided for `id_declared` should be the same as `id`, otherwise the parameterized macro will panic
+        [ $( $id_declared:ident = { $($inputs:expr),*  }),* ],
+        { $($body:tt)* }
+    ) => {
+        #[$crate::parameterized(
+            $($id_declared = {$($inputs),*}),*
+        )]
+        #[test]
+        fn $name( $( $id: $ty ),* )  {
+            $($body)*
+        }
+    };
+}
+
+#[cfg(test)]
+mod test_cases {
+    use crate::test_case;
+
+    test_case!(my_test, (p: i32, q: i32, r: u32), {
+        assert!(p == q);
+    });
 }
 
 #[cfg(test)]
@@ -27,6 +57,15 @@ mod tests {
 
     fn add5<T: Into<u32>>(component: T) -> u32 {
         component.into() + 5
+    }
+
+    #[pm(input = {
+        0, 1, 2
+    }, expected = {
+        5, 6, 7
+    })]
+    fn _test_case(input: u16, expected: u32) {
+        assert_eq!(add5(input), expected)
     }
 
     mod readme_test {

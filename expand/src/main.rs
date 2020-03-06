@@ -1,64 +1,35 @@
-//#[macro_use]
-//extern crate parameterized;
-// or
-//use parameterized::parameterized;
-// optionally, you can rename the import (see below for an example), e.g.
-//use parameterized::parameterized as pm;
-
 fn main() {}
 
-#[cfg_attr(not(test), allow(unused))]
-enum WineRegion {
-    Champagne,
-    Jura,
-    Languedoc,
-    Loire(LoireArea),
+enum A {
+    One,
+    Two,
+    Three,
 }
 
-#[cfg_attr(not(test), allow(unused))]
-impl WineRegion {
-    fn tasted(&self) -> Option<()> {
-        match self {
-            WineRegion::Champagne => Some(()),
-            WineRegion::Jura => None,
-            WineRegion::Languedoc => Some(()),
-            WineRegion::Loire(area) => area.tasted(),
-        }
-    }
-}
-
-#[cfg_attr(not(test), allow(unused))]
-enum LoireArea {
-    Nantes,
-    Touraine,
-}
-
-#[cfg_attr(not(test), allow(unused))]
-impl LoireArea {
-    fn tasted(&self) -> Option<()> {
-        Some(())
+impl A {
+    fn yeah(&self) -> bool {
+        true
     }
 }
 
 #[cfg(test)]
-mod tests {
+mod le_spekje {
     use super::*;
-    use parameterized::parameterized as pm;
+    use parameterized::test_case;
 
-    #[pm(region = {
-        WineRegion::Champagne,
-        WineRegion::Languedoc,
-        WineRegion::Loire(LoireArea::Nantes),
-        WineRegion::Loire(LoireArea::Touraine),
-    })]
-    fn wines_tasted(region: WineRegion) {
-        assert!(region.tasted().is_some())
-    }
+    test_case!(yellow, (p: i32, q: A),
+    [
+        p = {1, 2, 3},
+        q = {A::One, A::Two, A::Three}
+    ], {
+        assert!(p < 4 && q.yeah());
+    });
 
-    #[pm(region = {
-        WineRegion::Jura,
-    })]
-    fn wines_not_tasted(region: WineRegion) {
-        assert!(region.tasted().is_none())
-    }
+    test_case!(pink, (p: i32, q: A),
+    [
+        p = {1, 2, 3},
+        q = {A::One, A::Two, A::Three}
+    ], {
+        assert!(p < 4 && q.yeah());
+    });
 }
