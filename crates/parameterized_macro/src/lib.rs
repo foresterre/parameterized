@@ -163,14 +163,14 @@ pub fn parameterized(
 /// Remove the last attribute (after any parameterized attribute) named 'test'.
 ///
 ///
-/// This allows developers using IDE's which do not expand attribute crates (such as
-/// intellij-rust) to use IDE features which rely on the expansion of said crates (such as 'run test'
+/// This allows developers using IDE's which do not expand attribute macros (such as
+/// intellij-rust) to use IDE features which rely on the expansion of said macros (such as 'run test'
 /// gutter functionality in Intellij IDEA) to annotate their test functions with both the
 /// parameterized attribute, and the test attribute. The test attribute has to be defined after
 /// the parameterized attribute!
-/// An advantages of this approach over tricking the IDE by defining an declarative parameterized_macro
+/// An advantages of this approach over tricking the IDE by defining an declarative macro
 /// which defines an empty test case is that we are not dependent on having an IDE which can expand
-/// declarative crates.
+/// declarative macros.
 ///
 ///
 /// An example:
