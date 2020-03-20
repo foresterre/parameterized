@@ -18,4 +18,4 @@ maintenance = { status = "actively-developed" }
 parameterized-macro = { path = "crates/parameterized_macro", version = "0.1.1" }
 
 [workspace]
-members = ["crates/parameterized_macro", "expand"]
+members = ["crates/parameterized_macro", "crates/parameterized_case", "expand"]
