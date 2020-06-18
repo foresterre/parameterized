@@ -4,18 +4,15 @@ version = "0.1.1"
 authors = ["Martijn Gribnau <garm@ilumeo.com>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
-description = "Procedural macro which allows you to define a test which can be run with multiple arguments. Test cases are defined using the 'parameterized' attribute instead of the 'test' attribute. This crate was inspired by JUnit's `@ParameterizedTest`."
+description = "Procedural macro which adds parameterized testing, inspired by JUnits `@ParameterizedTest`, to Rust ."
 documentation = "https://docs.rs/parameterized"
 repository = "https://github.com/foresterre/parameterized"
 readme = "README.md"
-keywords = ["parameterized", "attribute", "test", "unit-test", "junit"]
+keywords = ["parameterized", "parametrized", "test", "unit-test", "junit"]
 categories = ["development-tools", "development-tools::testing"]
 
-[badges]
-maintenance = { status = "actively-developed" }
-
 [dependencies]
-parameterized-macro = { path = "crates/parameterized-macro", version = "0.1.1" }
+parameterized-macro = { path = "parameterized-macro", version = "0.1.1" }
 
 [workspace]
-members = ["crates/parameterized-macro", "expand"]
+members = ["parameterized-macro", "expand"]
