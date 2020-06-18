@@ -6,6 +6,11 @@ This crate was inspired by JUnit `@ParameterizedTest`.
 
 ### Examples:
 
+Additional examples can be found at the <a href="https://github.com/foresterre/parameterized-examples">parameterized-examples repository</a>,
+the <a href="example-usage">example-usage</a> crate in this repository and in the <a href="parameterized-macro/tests">tests</a> folder.
+
+<br>
+
 **Example: Add5**
 
 ```rust
@@ -81,12 +86,6 @@ mod tests {
     }
 }
 ```
-
-<br>
-
-Additional examples can be found <a href="https://github.com/foresterre/parameterized-examples">here</a> (parameterized-examples repo)
-and in the <a href="macro/tests">tests</a> folder.
-
 
 <br>
 

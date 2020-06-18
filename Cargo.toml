@@ -15,4 +15,4 @@ categories = ["development-tools", "development-tools::testing"]
 parameterized-macro = { path = "parameterized-macro", version = "0.1.1" }
 
 [workspace]
-members = ["parameterized-macro", "expand"]
+members = ["example-usage", "expand", "parameterized-macro"]
