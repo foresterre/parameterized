@@ -29,11 +29,7 @@ pub fn parameterized(
     let vis = &func.vis;
     let func_args = &func.sig.inputs;
     let body_block = &func.block;
-    let mut attributes = func.attrs.to_vec();
-
-    // removes the last defined `#[test]` attribute (only if defined after the #[parameterized(...)]
-    // attribute)
-    remove_test_attribute(&mut attributes);
+    let attributes = func.attrs.to_vec();
 
     let mod_name = format!("{}", name);
     let mod_ident = syn::Ident::new(mod_name.as_str(), name.span());
@@ -158,47 +154,6 @@ pub fn parameterized(
     };
 
     token_stream.into()
-}
-
-/// Remove the last attribute (after any parameterized attribute) named 'test'.
-///
-///
-/// This allows developers using IDE's which do not expand attribute macros (such as
-/// intellij-rust) to use IDE features which rely on the expansion of said macros (such as 'run test'
-/// gutter functionality in Intellij IDEA) to annotate their test functions with both the
-/// parameterized attribute, and the test attribute. The test attribute has to be defined after
-/// the parameterized attribute!
-/// An advantages of this approach over tricking the IDE by defining an declarative macro
-/// which defines an empty test case is that we are not dependent on having an IDE which can expand
-/// declarative macros.
-///
-///
-/// An example:
-/// ```
-/// use parameterized_macro::parameterized;
-///
-/// fn squared(input: i8) -> i8 {
-///   input * input
-/// }
-///
-/// #[parameterized(input = {
-///     -2, -1, 0, 1, 2
-/// }, expected = {
-///     4, 1, 0, 1, 4
-/// })]
-/// #[test] // <--
-/// fn my_parameterized_test(input: i8, expected: i8) {
-///     assert_eq!(squared(input), expected);
-/// }
-/// ```
-///
-/// Implementation based on [datatest](https://github.com/commure/datatest/blob/122f112705bbcbdbea430bf7cad0321d97d5fb4a/datatest-derive/src/lib.rs#L326-L335),
-///   which is licensed under the Apache-2.0 OR MIT license. Suggested by [Ivan Dubrov](https://github.com/foresterre/parameterized/issues/21#issuecomment-575834515).
-fn remove_test_attribute(attributes: &mut Vec<syn::Attribute>) {
-    attributes
-        .into_iter()
-        .rposition(|attr| attr.path.is_ident("test"))
-        .map(|pos| attributes.remove(pos));
 }
 
 /// Checks whether all inputs have equal length.
