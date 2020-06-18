@@ -13,8 +13,6 @@ categories = ["development-tools", "development-tools::testing"]
 
 autotests = false
 
-[features]
-enable_test_with_wildcard = []
 
 [lib]
 proc-macro = true
