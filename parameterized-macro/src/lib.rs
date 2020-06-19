@@ -2,9 +2,7 @@
 extern crate syn;
 extern crate proc_macro;
 
-use std::collections::{BTreeMap, HashMap};
-use std::iter::FromIterator;
-
+use ordnung::Map;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::export::fmt::Display;
@@ -41,8 +39,13 @@ pub fn parameterized(
     let values = argument_lists
         .args
         .iter()
-        .map(|v| (v.id.clone(), v.param_args.iter().cloned().collect()))
-        .collect::<HashMap<syn::Ident, Vec<syn::Expr>>>();
+        .map(|v| {
+            (
+                v.id.clone(),
+                v.param_args.iter().cloned().collect::<Vec<syn::Expr>>(),
+            )
+        })
+        .collect::<Map<syn::Ident, Vec<syn::Expr>>>();
 
     // interlude: ensure that the parameterized test definition contain unique identifiers.
     if values.len() != identifiers_len {
@@ -125,31 +128,34 @@ pub fn parameterized(
 /// the first test shall define `"a"` and `1`, the second `"b"` and 2, but for the third case,
 /// a value for `v` exists (namely `"c"`), however no value to substitute for `w` exists.
 /// Therefore, no fully valid set of tests can be constructed from the parameterized definition.
-fn check_all_input_lengths(map: &HashMap<syn::Ident, Vec<syn::Expr>>) -> usize {
-    map.values()
-        .fold(None, |acc: Option<usize>, exprs| match acc {
-            Some(size) if size == exprs.len() => Some(size),
-            Some(_) => {
-                panic_on_inequal_length(map);
-                unreachable!()
-            }
-            None => Some(exprs.len()),
-        })
-        .unwrap_or_default()
+fn check_all_input_lengths(map: &Map<syn::Ident, Vec<syn::Expr>>) -> usize {
+    let mut arguments: Option<usize> = None;
+    for (ident, values) in map.iter() {
+        match arguments {
+            Some(len) if len == values.len() => continue,
+            None => arguments = Some(values.len()),
+            _ => panic_on_inequal_length(map.iter(), ident, arguments.unwrap_or_default()),
+        }
+    }
+
+    arguments.unwrap_or_default()
 }
 
 /// When this function gets invoked, it will construct an error message and then panic! with that message.
-fn panic_on_inequal_length<K: Ord + Display, V>(map: impl IntoIterator<Item = (K, V)>) {
-    let sorted_by_id: BTreeMap<K, V> = BTreeMap::from_iter(map);
-
-    let ids: String = sorted_by_id
-        .iter()
+fn panic_on_inequal_length<K: Ord + Display, V, D: Display>(
+    map: impl Iterator<Item = (K, V)>,
+    ident: D,
+    expected_length: usize,
+) {
+    let ids: String = map
         .map(|(id, _)| format!("{}", id))
         .collect::<Vec<String>>()
         .join(", ");
 
     panic!(
-        "[parameterized-macro] error: All inputs ({}) should have equal length.",
-        ids
+        "[parameterized-macro] error: Inconsistent argument list length for '{}'; all inputs ({}) should have equal length (expected = {}).",
+        ident,
+        ids,
+        expected_length
     )
 }

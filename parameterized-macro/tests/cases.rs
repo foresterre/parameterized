@@ -23,6 +23,8 @@ fn individual_cases() {
 
     t.compile_fail("tests/fail/id_already_defined.rs");
     t.compile_fail("tests/fail/inequal_amount_of_arg.rs");
+    t.compile_fail("tests/fail/inequal_amount_of_arg_order.rs");
+    t.compile_fail("tests/fail/input_param_order_in_err_message.rs");
     t.compile_fail("tests/fail/not_a_fn.rs");
     t.compile_fail("tests/fail/on_visibility.rs");
     t.compile_fail("tests/fail/square_brackets.rs");
