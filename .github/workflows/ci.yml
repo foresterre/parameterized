@@ -1,6 +1,6 @@
 # GitHub Actions workflow: CI for parameterized
 #
-# based on: https://github.com/BurntSushi/bstr/blob/master/.github/workflows/ci.yml
+# initially based on: https://github.com/BurntSushi/bstr/blob/master/.github/workflows/ci.yml
 # which is licensed under Apache License, Version 2.0 or MIT license
 
 name: "GitHub Actions: CI"
@@ -50,39 +50,65 @@ jobs:
 
 
     steps:
-      # checkout
-      - name: checkout repository
-        uses: actions/checkout@v1
+      - name: checkout.repo
+        uses: actions/checkout@v2
+      - name: install_rust
+        uses: actions-rs/toolchain@v1
         with:
-          fetch-depth: 1
+          toolchain: ${{ matrix.rust }}
+          override: true
+          profile: minimal
 
-      # install: rust
-      - name: install Rust
-        uses: hecrj/setup-rust-action@v1
+      - name: build.workspace
+        uses: actions-rs/cargo@v1
         with:
-          rust-version: ${{ matrix.rust }}
+          command: build
+          args: --verbose --all
 
-      # build / doc / test
-      - name: build all workspace crates
-        run: cargo build --verbose --all
+      - name: test.workspace.default_features
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --verbose --all
 
-      - name: "run all default features tests"
-        run: cargo test --all
+      - name: test.workspace.all_features
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --verbose --all --all-features
 
   rustfmt:
-    name: rustfmt
-    runs-on: ubuntu-latest
+    name: pipeline_rustfmt
+    runs-on: ubuntu-18.04
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
+      - name: install_rust
+        uses: actions-rs/toolchain@v1
         with:
-          fetch-depth: 1
-      - name: Install Rust
-        uses: hecrj/setup-rust-action@v1
-        with:
-          rust-version: stable
-      - name: Install rustfmt
-        run: rustup component add rustfmt
-      - name: Check formatting
+          toolchain: stable
+          override: true
+          profile: minimal
+          components: rustfmt
+      - name: check_formatting
         run: |
           cargo fmt --all -- --check
+
+  clippy:
+    name: pipeline_clippy
+    runs-on: ubuntu-18.04
+    steps:
+      - name: checkout_repo
+        uses: actions/checkout@v2
+      - name: install_rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          profile: minimal
+          components: clippy
+      - name: check_with_clippy
+        uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --all-features --workspace
