@@ -4,4 +4,4 @@ error: custom attribute panicked
 3 | #[parameterized(v = { 1, 2, 3 }, v = { 1, 2, 3 })]
   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
-  = help: message: Duplicate identifier(s) found. Please use unique parameter names.
+  = help: message: [parameterized-macro] error: Duplicate identifier(s) found. Please use unique parameter names.
