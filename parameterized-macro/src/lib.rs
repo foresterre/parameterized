@@ -4,7 +4,6 @@ extern crate proc_macro;
 
 use std::collections::{BTreeMap, HashMap};
 use std::iter::FromIterator;
-use std::sync::atomic::{AtomicUsize, Ordering};
 
 use proc_macro2::TokenStream;
 use quote::quote;
@@ -22,75 +21,42 @@ pub fn parameterized(
     // v := { ...exprs },
     // exprs := { e1, e2, e3, ... }
     // e := EXPR
-    let args = parse_macro_input!(args as attribute::AttributeArgList);
+    let argument_lists = parse_macro_input!(args as attribute::AttributeArgList);
     let func = parse_macro_input!(input as syn::ItemFn);
 
     let name = &func.sig.ident;
     let vis = &func.vis;
     let func_args = &func.sig.inputs;
     let body_block = &func.block;
-    let attributes = func.attrs.to_vec();
+    let attributes = &func.attrs;
 
     let mod_name = format!("{}", name);
     let mod_ident = syn::Ident::new(mod_name.as_str(), name.span());
 
-    // Used to give generated test cases unique names.
-    let generated_ident_id = AtomicUsize::new(0);
+    // For each provided argument (per parameter), we create a let bind at the start of the fn:
+    // * `let #ident: #ty = #expr;`
+    // After that we append the body of the test function
+    let identifiers_len = argument_lists.args.len();
 
-    // **implementation idea**
-    //
-    // step 1
-    //
-    // map {
-    //   v -> ...EXPR*_v,
-    //   w -> ...EXPR*_w,
-    // }
-    // .collect<Ident, Vec<Expr>>   // len(v) ?= len(w) ?= ...IDENT*
-    //
-    // step 2
-    //
-    // check that all EXPR* have the same length, else err
-    //
-    // step 3
-    //
-    // now we need to create test cases, one for each EXPR, consisting of:
-    // * `let #ident: #ty = #expr;` bind at the start of the fn, #ident is key of the map,
-    //      #ty is the matching fn param, #expr is the current expr
-    // * then append the body (block) of the fn
-    //
-
-    let identifiers_defined = args.args.len();
-
-    // step 1 impl
-    let exprs_by_id: HashMap<syn::Ident, Vec<syn::Expr>> = args
+    let values = argument_lists
         .args
         .iter()
         .map(|v| (v.id.clone(), v.param_args.iter().cloned().collect()))
-        .collect();
+        .collect::<HashMap<syn::Ident, Vec<syn::Expr>>>();
 
     // interlude: ensure that the parameterized test definition contain unique identifiers.
-    if exprs_by_id.len() != identifiers_defined {
-        panic!("Duplicate identifier(s) found. Please use unique parameter names.")
+    if values.len() != identifiers_len {
+        panic!("[parameterized-macro] error: Duplicate identifier(s) found. Please use unique parameter names.")
     }
 
-    // step 2 impl
-    let amount_of_test_cases = check_all_input_lengths(&exprs_by_id);
+    let amount_of_test_cases = check_all_input_lengths(&values);
 
-    // step 3 impl
     let test_case_fns = (0..amount_of_test_cases).map(|i| {
         let binds: Vec<TokenStream> = func_args
             .iter()
             .map(|fn_arg| {
-                // we require an argument (name: Type) to be Typed ,
-                // and not Receiver (a variant of self).
-                if let syn::FnArg::Typed(pat) = fn_arg {
-                    let fn_expected_ty = &pat.ty;
-                    let fn_ident = pat.pat.as_ref();
-
-                    // The following is a dance to obtain the actual identifier.
-                    if let syn::Pat::Ident(pat_ident) = fn_ident {
-                        let fn_arg_ident = &pat_ident.ident;
-
+                if let syn::FnArg::Typed(syn::PatType { pat, ty, .. }) = fn_arg {
+                    if let syn::Pat::Ident(syn::PatIdent { ident, .. }) = pat.as_ref() {
                         // Now we use to identifier from the function signature to get the
                         // current (i) test case we are creating.
                         //
@@ -104,32 +70,26 @@ pub fn parameterized(
                         // generated test function) the first expressions from the identified
                         // argument lists, in this case from `chars`, `a` and from `ints`, `1`.
                         // The second test case does the same
-                        if let Some(exprs) = exprs_by_id.get(&fn_arg_ident) {
+                        if let Some(exprs) = values.get(ident) {
                             let expr = &exprs[i];
 
                             // A let binding is constructed so we can type check the given expression.
                             return quote! {
-                                let #fn_arg_ident: #fn_expected_ty = #expr;
+                                let #ident: #ty = #expr;
                             };
                         } else {
-                            // This should not be possible, since we check use as range exactly
-                            // the amount of cases and check that the input argument lists are
-                            // equal to one another.
-                            panic!("not enough test cases found, [this should never happen] ")
+                            panic!("[parameterized-macro] error: No matching values found for '{}'", ident);
                         }
                     } else {
-                        // This should also never happen. But perhaps it could, I'm not sure.
-                        panic!("Unable to find a parameter name...")
+                        panic!("[parameterized-macro] error: Function parameter identifier was not found");
                     }
                 } else {
-                    // Idem, not sure whether this can even happen either.
-                    panic!("Malformed function input.")
+                    panic!("[parameterized-macro] error: Given function argument should be typed");
                 }
             })
             .collect(); // end of construction of let bindings
 
-        let next_id = generated_ident_id.fetch_add(1, Ordering::SeqCst);
-        let ident = format!("case_{}", next_id);
+        let ident = format!("case_{}", i);
         let ident = syn::Ident::new(ident.as_str(), func.span()); // fixme: span
 
         quote! {
@@ -188,5 +148,8 @@ fn panic_on_inequal_length<K: Ord + Display, V>(map: impl IntoIterator<Item = (K
         .collect::<Vec<String>>()
         .join(", ");
 
-    panic!("All inputs ({}) should have equal length.", ids)
+    panic!(
+        "[parameterized-macro] error: All inputs ({}) should have equal length.",
+        ids
+    )
 }

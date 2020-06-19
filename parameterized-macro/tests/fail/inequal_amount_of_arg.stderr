@@ -4,4 +4,4 @@ error: custom attribute panicked
 3 | #[parameterized(v = { "a", "b" }, w = { 1, 2, 3 })]
   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
-  = help: message: All inputs (v, w) should have equal length.
+  = help: message: [parameterized-macro] error: All inputs (v, w) should have equal length.
