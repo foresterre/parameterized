@@ -2,7 +2,7 @@
 extern crate syn;
 extern crate proc_macro;
 
-use ordnung::Map;
+use linked_hash_map::LinkedHashMap;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::export::fmt::Display;
@@ -45,7 +45,7 @@ pub fn parameterized(
                 v.param_args.iter().cloned().collect::<Vec<syn::Expr>>(),
             )
         })
-        .collect::<Map<syn::Ident, Vec<syn::Expr>>>();
+        .collect::<LinkedHashMap<syn::Ident, Vec<syn::Expr>>>();
 
     // interlude: ensure that the parameterized test definition contain unique identifiers.
     if values.len() != identifiers_len {
@@ -128,7 +128,7 @@ pub fn parameterized(
 /// the first test shall define `"a"` and `1`, the second `"b"` and 2, but for the third case,
 /// a value for `v` exists (namely `"c"`), however no value to substitute for `w` exists.
 /// Therefore, no fully valid set of tests can be constructed from the parameterized definition.
-fn check_all_input_lengths(map: &Map<syn::Ident, Vec<syn::Expr>>) -> usize {
+fn check_all_input_lengths(map: &LinkedHashMap<syn::Ident, Vec<syn::Expr>>) -> usize {
     let mut arguments: Option<usize> = None;
     for (ident, values) in map.iter() {
         match arguments {

@@ -25,7 +25,7 @@ path = "tests/cases.rs"
 proc-macro2 = "1"
 quote = "1"
 syn = { version = "1", features = ["full"] }
-ordnung = "0.0.1"
+linked-hash-map = "0.5.3"
 
 [dev-dependencies]
 trybuild = "1.0"
