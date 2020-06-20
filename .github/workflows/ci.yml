@@ -3,7 +3,7 @@
 # initially based on: https://github.com/BurntSushi/bstr/blob/master/.github/workflows/ci.yml
 # which is licensed under Apache License, Version 2.0 or MIT license
 
-name: "GitHub Actions: CI"
+name: "CI"
 on:
   pull_request:
   push:
@@ -78,36 +78,36 @@ jobs:
           args: --verbose --all --all-features
 
   rustfmt:
-    name: pipeline_rustfmt
+    name: pipeline.rustfmt
     runs-on: ubuntu-18.04
     steps:
-      - name: Checkout repository
+      - name: checkout.repo
         uses: actions/checkout@v2
-      - name: install_rust
+      - name: install.rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           override: true
           profile: minimal
           components: rustfmt
-      - name: check_formatting
+      - name: check.fmt
         run: |
           cargo fmt --all -- --check
 
   clippy:
-    name: pipeline_clippy
+    name: pipeline.clippy
     runs-on: ubuntu-18.04
     steps:
-      - name: checkout_repo
+      - name: checkout.repo
         uses: actions/checkout@v2
-      - name: install_rust
+      - name: install.rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           override: true
           profile: minimal
           components: clippy
-      - name: check_with_clippy
+      - name: check.clippy
         uses: actions-rs/clippy-check@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
