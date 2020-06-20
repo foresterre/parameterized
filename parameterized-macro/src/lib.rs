@@ -134,7 +134,7 @@ fn check_all_input_lengths(map: &LinkedHashMap<syn::Ident, Vec<syn::Expr>>) -> u
         match arguments {
             Some(len) if len == values.len() => continue,
             None => arguments = Some(values.len()),
-            _ => panic_on_inequal_length(map.iter(), ident, arguments.unwrap_or_default()),
+            _ => panic_on_inequal_length(map.iter(), ident),
         }
     }
 
@@ -145,7 +145,6 @@ fn check_all_input_lengths(map: &LinkedHashMap<syn::Ident, Vec<syn::Expr>>) -> u
 fn panic_on_inequal_length<K: Ord + Display, V, D: Display>(
     map: impl Iterator<Item = (K, V)>,
     ident: D,
-    expected_length: usize,
 ) {
     let ids: String = map
         .map(|(id, _)| format!("{}", id))
@@ -153,9 +152,8 @@ fn panic_on_inequal_length<K: Ord + Display, V, D: Display>(
         .join(", ");
 
     panic!(
-        "[parameterized-macro] error: Inconsistent argument list length for '{}'; all inputs ({}) should have equal length (expected = {}).",
+        "[parameterized-macro] error: Inconsistent argument list length for '{}'; all inputs ({}) should have equal length",
         ident,
-        ids,
-        expected_length
+        ids
     )
 }
