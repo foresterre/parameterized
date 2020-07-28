@@ -21,12 +21,35 @@ macro_rules! ide {
     };
 }
 
+#[macro_export]
+macro_rules! testmod {
+    {$name:ident, $body:item} => {
+        mod $name {
+            use super::*;
+
+            #[test]
+            fn __ide_show_test_intent(){}
+
+            $body
+        }
+    };
+}
+
 #[cfg(test)]
 mod tests {
     use super::parameterized as pm;
 
     fn add5<T: Into<u32>>(component: T) -> u32 {
         component.into() + 5
+    }
+
+    testmod! {an_example,
+
+        #[pm(input = {0})]
+        #[should_panic] // test will fail, but shows in the 'run window' that the ide recognizes the test cases when running the test intent in the gutter next to `mod tests` above
+        fn mytest(input: i8) { // ... however, no individual intent is generated, ie this doesn't (yet) work :(
+            assert_eq!(input, 0);
+        }
     }
 
     mod readme_test {
