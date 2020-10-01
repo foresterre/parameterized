@@ -42,20 +42,20 @@ impl LoireArea {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use parameterized::parameterized as pm;
+    use super::*;
 
-    #[pm(region = {
-        WineRegion::Champagne,
-        WineRegion::Languedoc,
-        WineRegion::Loire(LoireArea::Nantes),
-        WineRegion::Loire(LoireArea::Touraine),
-    })]
+    #[pm(
+        champagne = { WineRegion::Champagne },
+        languedoc = { WineRegion::Languedoc },
+        nantes    = { WineRegion::Loire(LoireArea::Nantes) },
+        touraine  = { WineRegion::Loire(LoireArea::Touraine) },
+    )]
     fn wines_tasted(region: WineRegion) {
         assert!(region.tasted().is_some())
     }
 
-    #[pm(region = {
+    #[pm(jura = {
         WineRegion::Jura,
     })]
     fn wines_not_tasted(region: WineRegion) {
