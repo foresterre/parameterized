@@ -53,30 +53,16 @@ mod part1 {
     /// measure, we'll also add the empty case where we'll assume, no instructions means the ground
     /// floor.
     #[parameterized(
-        input = {
-            "(())",
-            "()()",
-            "(((",
-            "(()(()(",
-            "))(((((",
-            "())",
-            "))(",
-            ")))",
-            ")())())",
-            ""
-        },
-        expected_level = {
-            0,
-            0,
-            3,
-            3,
-            3,
-            -1,
-            -1,
-            -3,
-            -3,
-            0
-        },
+        up_up_down_down =           { "(())",       0  },
+        up_down_up_down =           { "()()",       0  },
+        up_up_up =                  { "(((",        3  },
+        up_up_down_up_up_down =     { "(()(()(",    3  },
+        down_down_up_up_up_up_up =  { "))(((((",    3  },
+        up_down_down =              { "())",        -1 },
+        down_down_up =              { "))(",        -1 },
+        down_down_down =            { ")))",        -3 },
+        down_up_down_down_up_down = { ")())())",    -3 },
+        do_nothing =                { "",           0  }
     )]
     fn go_to_apartment_level_test(input: &str, expected_level: isize) {
         let level = go_to_apartment_level(input);
@@ -84,20 +70,11 @@ mod part1 {
     }
 
     #[parameterized(
-        input = {
-            " ",                                // a space
-            "()()() ()()",                      // a space surround by valid tokens
-            "\t",                               // a tab
-            "()()()\0",                         // nul terminated string
-            "⬆"                                 // an up-pointing arrow
-        },
-        expected_error = {
-            NorthPoleError::InvalidInstruction(' '),
-            NorthPoleError::InvalidInstruction(' '),
-            NorthPoleError::InvalidInstruction('\t'),
-            NorthPoleError::InvalidInstruction('\0'),
-            NorthPoleError::InvalidInstruction('⬆'),
-        },
+        a_space = { " ",                                      NorthPoleError::InvalidInstruction(' ')  },
+        a_space_surrounded_by_valid_tokens = { "()()( )()()", NorthPoleError::InvalidInstruction(' ')  },
+        a_tab = { "\t",                                       NorthPoleError::InvalidInstruction('\t') },
+        a_nul_terminated_string = { "()()()\0",               NorthPoleError::InvalidInstruction('\0') },
+        an_up_pointing_arrow = { "⬆",                         NorthPoleError::InvalidInstruction('⬆')  },
     )]
     fn go_to_apartment_level_invalid_token(input: &str, expected_error: NorthPoleError) {
         let level = go_to_apartment_level(input);
@@ -132,20 +109,11 @@ mod part2 {
     use crate::entered_basement_at_instruction;
 
     #[parameterized(
-        input = {
-            ")",
-            "())",
-            "((())))",
-            ")()",
-            "()())"
-        },
-        first_positive_instruction = {
-            1,
-            3,
-            7,
-            1,
-            5,
-        },
+        down_to_basement =                          { ")",          1 },
+        up_once_and_then_to_the_basement =          { "())",        3 },
+        up_three_times_and_then_to_the_basement =   { "((())))",    7 },
+        first_to_the_basement_and_then_up =         { ")()",        1 },
+        up_down_up_down_basement =                  { "()())",      5 }
     )]
     fn entered_basement_at_instruction_test(input: &str, first_positive_instruction: usize) {
         let instruction = entered_basement_at_instruction(input);
@@ -154,11 +122,10 @@ mod part2 {
     }
 
     #[parameterized(
-    input = {
-        "(",
-        "(())",
-        "",
-    })]
+        went_up =                               { "("       },
+        went_up_and_back_to_the_base_level =    { "(())"    },
+        didnt_move =                            { ""        }
+    )]
     fn never_entered_basement(input: &str) {
         let instruction = entered_basement_at_instruction(input);
 

@@ -1,56 +1,81 @@
+use proc_macro2::Ident;
 use syn::braced;
 use syn::export::Formatter;
 use syn::parse::{Parse, ParseStream, Result};
 use syn::punctuated::Punctuated;
 
-/// An ordered list of attribute arguments, which consists of (id, param-args) pairs.
+/// An ordered list of attribute arguments, which consists of test cases which start with the name
+/// of the test case, followed by a list of arguments. The order of the argument is equal to the
+/// input of the function.
 #[derive(Clone)]
-pub(crate) struct AttributeArgList {
-    pub(crate) args: Punctuated<IdentifiedArgList, Token![,]>,
+pub(crate) struct TestCases {
+    pub(crate) cases: Punctuated<TestCase, Token![,]>,
 }
 
-impl Parse for AttributeArgList {
-    /// This part parses
-    /// It uses IdentifiedArgList.parse() for each inner argument.
-    ///
-    /// ['IdentifiedArgList.parse ']: struct.IdentifiedArgList
+impl TestCases {
+    pub(crate) fn cases(&self) -> Vec<&TestCase> {
+        self.cases.iter().collect()
+    }
+}
+
+impl std::fmt::Debug for TestCases {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        f.write_str("TestCases(")?;
+
+        for case in self.cases.iter() {
+            case.fmt(f)?;
+        }
+
+        f.write_str(")")
+    }
+}
+
+impl Parse for TestCases {
     fn parse(input: ParseStream) -> Result<Self> {
-        Ok(AttributeArgList {
-            args: Punctuated::parse_terminated(input)?,
+        Ok(TestCases {
+            cases: Punctuated::parse_terminated(input)?,
         })
     }
 }
 
-/// A single (id, param-args) pair which consists of:
-///   id: identifier for the list
-///   param_args: ordered list arguments formatted using curly-braced list syntax, i.e. "{ 3, 4, 5 }"
+/// The macro representation of a test case.
+/// The syntax for a single test case looks like this `id = { arg1, arg2, ..., argn }`.
+/// Here the id is the name of a test case. The list of arguments, which is comma delimited and
+/// surrounded by brackets contains a list of arguments which will be supplied to the test function
+/// in the same order as provided here.
 #[derive(Clone)]
-pub(crate) struct IdentifiedArgList {
+pub(crate) struct TestCase {
     pub(crate) id: syn::Ident,
     assignment: Token![=],
     braces: syn::token::Brace,
-    pub(crate) param_args: Punctuated<syn::Expr, Token![,]>,
+    pub(crate) arguments: Punctuated<syn::Expr, Token![,]>,
 }
 
-impl std::fmt::Debug for IdentifiedArgList {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        f.write_str(&format!("IdentifiedArgList(id = {:?})", self.id))
+impl TestCase {
+    pub(crate) fn identifier(&self) -> &Ident {
+        &self.id
+    }
+
+    pub(crate) fn inputs(&self) -> Vec<&syn::Expr> {
+        self.arguments.iter().collect()
     }
 }
 
-impl Parse for IdentifiedArgList {
-    // parts:
-    //
-    // v = { a, b, c }
-    // $ident $Token![=] ${ $expr, ... }
+impl std::fmt::Debug for TestCase {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        f.write_str(&format!("TestCase(id = {:?})", self.id))
+    }
+}
+
+impl Parse for TestCase {
     fn parse(input: ParseStream) -> Result<Self> {
         let content;
 
-        Ok(IdentifiedArgList {
+        Ok(TestCase {
             id: input.parse()?,
             assignment: input.parse()?,
             braces: braced!(content in input),
-            param_args: Punctuated::parse_terminated(&content)?,
+            arguments: Punctuated::parse_terminated(&content)?,
         })
     }
 }

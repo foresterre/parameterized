@@ -34,10 +34,12 @@ mod tests {
 
         ide!();
 
-        #[pm(input = {
-            0, 1, 2
-        }, expected = {
-            5, 6, 7
+        #[pm(n0 = {
+            0, 5
+        }, n1 = {
+            1, 6
+        }, n2 = {
+            2, 7
         })]
         fn test_add5(input: u16, expected: u32) {
             assert_eq!(add5(input), expected)
@@ -49,7 +51,7 @@ mod tests {
 
         ide!();
 
-        #[pm(input = { 2, 3, 4 }, output = { 4, 6, 8 })]
+        #[pm(two = { 2, 4 }, six = { 6, 12 }, eight = { 8, 16 })]
         fn test_times2(input: i32, output: i32) {
             let times2 = |receiver: i32| receiver * 2;
 
@@ -62,7 +64,7 @@ mod tests {
 
         ide!();
 
-        #[pm(input = { None, None, None })]
+        #[pm(none = { None })]
         #[should_panic]
         fn numbers(input: Option<()>) {
             input.unwrap()
