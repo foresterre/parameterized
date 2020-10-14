@@ -1,3 +1,5 @@
+#![cfg(feature = "valuesource")]
+
 #[test]
 fn individual_cases() {
     let t = trybuild::TestCases::new();

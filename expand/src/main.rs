@@ -1,10 +1,10 @@
-//#[macro_use]
-//extern crate parameterized;
+#[cfg(test)]
+#[macro_use]
+extern crate parameterized;
 // or
 //use parameterized::parameterized;
 // optionally, you can rename the import (see below for an example), e.g.
 //use parameterized::parameterized as pm;
-
 fn main() {}
 
 #[cfg_attr(not(test), allow(unused))]
@@ -42,10 +42,9 @@ impl LoireArea {
 
 #[cfg(test)]
 mod tests {
-    use parameterized::parameterized as pm;
     use super::*;
 
-    #[pm(
+    #[parameterized(
         champagne = { WineRegion::Champagne },
         languedoc = { WineRegion::Languedoc },
         nantes    = { WineRegion::Loire(LoireArea::Nantes) },
@@ -55,7 +54,7 @@ mod tests {
         assert!(region.tasted().is_some())
     }
 
-    #[pm(jura = {
+    #[parameterized(jura = {
         WineRegion::Jura,
     })]
     fn wines_not_tasted(region: WineRegion) {

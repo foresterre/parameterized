@@ -1,20 +1,16 @@
-use syn::export::Formatter;
-use syn::parse::{Parse, ParseStream, Result};
-use syn::{Attribute, Block, FnArg, Ident, ItemFn, Pat, PatIdent, PatType, Type, Visibility};
-
 pub(crate) struct TestFn {
-    fun: ItemFn,
+    fun: ::syn::ItemFn,
 }
 
 impl TestFn {
-    pub(crate) fn parameters(&self) -> Vec<(&Ident, &Type)> {
+    pub(crate) fn parameters(&self) -> ::std::vec::Vec<(&::syn::Ident, &::syn::Type)> {
         self.fun
             .sig
             .inputs
             .iter()
             .filter_map(|item| {
-                if let FnArg::Typed(PatType { pat, ty, .. }) = item {
-                    if let Pat::Ident(PatIdent { ident, .. }) = pat.as_ref() {
+                if let ::syn::FnArg::Typed(::syn::PatType { pat, ty, .. }) = item {
+                    if let ::syn::Pat::Ident(::syn::PatIdent { ident, .. }) = pat.as_ref() {
                         Some((ident, ty.as_ref()))
                     } else {
                         None
@@ -26,25 +22,25 @@ impl TestFn {
             .collect()
     }
 
-    pub(crate) fn name(&self) -> &Ident {
+    pub(crate) fn name(&self) -> &::syn::Ident {
         &self.fun.sig.ident
     }
 
-    pub(crate) fn vis(&self) -> &Visibility {
+    pub(crate) fn vis(&self) -> &::syn::Visibility {
         &self.fun.vis
     }
 
-    pub(crate) fn body(&self) -> &Box<Block> {
+    pub(crate) fn body(&self) -> &Box<::syn::Block> {
         &self.fun.block
     }
 
-    pub(crate) fn attrs(&self) -> &Vec<Attribute> {
+    pub(crate) fn attrs(&self) -> &Vec<::syn::Attribute> {
         &self.fun.attrs
     }
 }
 
-impl std::fmt::Debug for TestFn {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+impl ::std::fmt::Debug for TestFn {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         f.write_str("TestFn(")?;
 
         for param in self.parameters() {
@@ -55,8 +51,8 @@ impl std::fmt::Debug for TestFn {
     }
 }
 
-impl Parse for TestFn {
-    fn parse(input: ParseStream) -> Result<Self> {
+impl ::syn::parse::Parse for TestFn {
+    fn parse(input: ::syn::parse::ParseStream) -> ::syn::parse::Result<Self> {
         Ok(TestFn {
             fun: input.parse()?,
         })
