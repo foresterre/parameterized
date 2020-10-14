@@ -3,6 +3,8 @@
 //!
 //! [`Advent of Code 2015`]: https://adventofcode.com/2015/day/1
 
+#![cfg_attr(not(test), allow(unused))]
+
 /// The parameterized macro can be included in two main ways (in Rust 2018):
 /// The first way is by including the macro directly with `use parameterized::parameterized` (here
 /// the first `parameterized` is the crate, while the second is the identifier of the attribute macro

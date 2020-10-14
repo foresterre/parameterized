@@ -12,7 +12,14 @@ keywords = ["parameterized", "parametrized", "test", "unit-test", "junit"]
 categories = ["development-tools", "development-tools::testing"]
 
 [dependencies]
-parameterized-macro = { path = "parameterized-macro", version = "0.2.0" }
+parameterized-macro = { path = "parameterized-macro", version = "0.2.0", optional = true }
+
+[features]
+default = ["valuesource"]
+# default syntax based on ValueSource from JUnit 5
+# additional syntax in 'case-by-case' style available through the following feature
+valuesource = ["parameterized-macro/valuesource"]
+matrix = ["parameterized-macro/matrix"]
 
 [workspace]
 members = ["example-usage", "expand", "parameterized-macro"]
