@@ -1,3 +1,6 @@
+//! For docs see [here](https://github.com/foresterre/parameterized/blob/master/README.md) :).
+// FIXME: add rustdoc
+
 extern crate parameterized_macro as parameterized;
 
 pub use parameterized::parameterized;
