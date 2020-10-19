@@ -1,4 +1,4 @@
-#[cfg(feature = "matrix")]
+#[cfg(feature = "casebycase")]
 #[cfg(not(feature = "valuesource"))]
 #[cfg(test)]
 mod tests {

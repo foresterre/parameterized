@@ -1,5 +1,5 @@
 #[cfg(feature = "valuesource")]
-#[cfg(not(feature = "matrix"))]
+#[cfg(not(feature = "casebycase"))]
 #[cfg(test)]
 mod tests {
     use crate::ide;

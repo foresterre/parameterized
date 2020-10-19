@@ -21,8 +21,8 @@ macro_rules! ide {
     };
 }
 
-#[cfg(all(feature = "matrix", not(feature = "valuesource")))]
-mod matrix;
+#[cfg(feature = "casebycase")]
+mod case_by_case;
 
-#[cfg(all(feature = "valuesource", not(feature = "matrix")))]
-mod values;
+#[cfg(feature = "valuesource")]
+mod value_source;
