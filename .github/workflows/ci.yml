@@ -71,11 +71,17 @@ jobs:
           command: test
           args: --verbose --all
 
-      - name: test.workspace.all_features
+      - name: test.workspace.spec_valuesource
         uses: actions-rs/cargo@v1
         with:
           command: test
-          args: --verbose --all --all-features
+          args: --verbose --all --no-default-features --features valuesource
+
+      - name: test.workspace.spec_casebycase
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --verbose --all --no-default-features --features casebycase
 
   rustfmt:
     name: pipeline.rustfmt
@@ -111,4 +117,14 @@ jobs:
         uses: actions-rs/clippy-check@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          args: --all-features --workspace
+          args: --workspace
+      - name: check.clippy.spec_valuesource
+        uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --no-default-features --features valuesource --workspace
+      - name: check.clippy.spec_casebycase
+        uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --no-default-features --features casebycase --workspace
