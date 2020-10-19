@@ -22,7 +22,7 @@ pub(crate) fn impl_case_by_case(
         })
         .collect::<Vec<_>>();
 
-    let token_stream = quote! {
+    let token_stream = ::quote::quote! {
         #[cfg(test)]
         #vis mod #mod_ident {
             use super::*;
@@ -44,7 +44,7 @@ fn generate_test_case(
 ) -> ::proc_macro2::TokenStream {
     let bindings = (0..params.len()).map(|i| create_binding(params[i], exprs[i]));
 
-    quote! {
+    ::quote::quote! {
         #[test]
         #(#attributes)*
         #vis fn #test_name() {
@@ -60,7 +60,7 @@ fn create_binding(
 ) -> ::proc_macro2::TokenStream {
     let (ident, typ) = param;
 
-    quote! {
+    ::quote::quote! {
         let #ident: #typ = #expr;
     }
 }

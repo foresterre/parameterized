@@ -19,7 +19,7 @@ default = ["valuesource"]
 # default syntax based on ValueSource from JUnit 5
 # additional syntax in 'case-by-case' style available through the following feature
 valuesource = ["parameterized-macro/valuesource"]
-matrix = ["parameterized-macro/matrix"]
+casebycase = ["parameterized-macro/casebycase"]
 
 [workspace]
-members = ["example-usage", "expand", "parameterized-macro"]
+members = ["parameterized-macro"]

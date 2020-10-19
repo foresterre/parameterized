@@ -30,6 +30,6 @@ linked-hash-map = { version = "0.5.3", optional = true }
 trybuild = "1.0"
 
 [features]
-default = ["valuesource"]
+default = []
 valuesource = ["linked-hash-map"]
-matrix = [] # use without default features
+casebycase = [] # use without default features
