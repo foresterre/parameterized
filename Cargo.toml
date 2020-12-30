@@ -5,21 +5,14 @@ authors = ["Martijn Gribnau <garm@ilumeo.com>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
 description = "Procedural macro which brings a compact parameterized testing implementation to Rust (inspired by JUnit @ParameterizedTest)"
-documentation = "https://docs.rs/parameterized"
+documentation = "https://docs.rs/crate/parameterized"
 repository = "https://github.com/foresterre/parameterized"
 readme = "README.md"
 keywords = ["parameterized", "parametrized", "test", "unit-test", "junit"]
 categories = ["development-tools", "development-tools::testing"]
 
 [dependencies]
-parameterized-macro = { path = "parameterized-macro", version = "0.2.0", optional = true }
-
-[features]
-default = ["valuesource"]
-# default syntax based on ValueSource from JUnit 5
-# additional syntax in 'case-by-case' style available through the following feature
-valuesource = ["parameterized-macro/valuesource"]
-casebycase = ["parameterized-macro/casebycase"]
+parameterized-macro = { path = "parameterized-macro", version = "0.2.0" }
 
 [workspace]
 members = ["parameterized-macro"]

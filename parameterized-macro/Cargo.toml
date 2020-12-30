@@ -24,12 +24,7 @@ path = "tests/cases.rs"
 proc-macro2 = "1"
 quote = "1"
 syn = { version = "1", features = ["full"] }
-linked-hash-map = { version = "0.5.3", optional = true }
+linked-hash-map = { version = "0.5.3" }
 
 [dev-dependencies]
 trybuild = "1.0"
-
-[features]
-default = []
-valuesource = ["linked-hash-map"]
-casebycase = [] # use without default features
