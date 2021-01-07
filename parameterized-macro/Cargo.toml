@@ -21,9 +21,9 @@ name = "tests"
 path = "tests/cases.rs"
 
 [dependencies]
-proc-macro2 = "1"
-quote = "1"
-syn = { version = "1", features = ["full"] }
+proc-macro2 = "1.0.24"
+quote = "1.0.8"
+syn = { version = "1.0.58", features = ["full"] }
 linked-hash-map = { version = "0.5.3" }
 
 [dev-dependencies]

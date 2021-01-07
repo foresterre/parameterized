@@ -1,8 +1,8 @@
 pub(crate) mod restructure;
 mod validation;
 
+use std::fmt::Formatter;
 use syn::braced;
-use syn::export::Formatter;
 use syn::parse::{Parse, ParseStream, Result};
 use syn::punctuated::Punctuated;
 
