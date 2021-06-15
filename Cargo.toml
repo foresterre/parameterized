@@ -11,6 +11,9 @@ readme = "README.md"
 keywords = ["parameterized", "parametrized", "test", "unit-test", "junit"]
 categories = ["development-tools", "development-tools::testing"]
 
+[package.metadata]
+msrv = "1.36.0"
+
 [dependencies]
 parameterized-macro = { path = "parameterized-macro", version = "=0.3.1" }
 
