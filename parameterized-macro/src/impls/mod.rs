@@ -1,5 +1,5 @@
+pub(crate) mod map;
 pub(crate) mod restructure;
-mod validation;
 
 use std::fmt::Formatter;
 use syn::braced;

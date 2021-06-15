@@ -4,4 +4,5 @@ error: custom attribute panicked
 3 | #[parameterized(zzz = { "a", "b" }, aaa = { 1, 2, 3 })]
   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
-  = help: message: [parameterized-macro] error: Inconsistent argument list length for 'aaa'; all inputs (zzz, aaa) should have equal length
+  = help: message: [parameterized-macro] error: Each test-case parameter should have an equal amount of values passed to it.
+          Expected 2 arguments for 'aaa', but got: 3
