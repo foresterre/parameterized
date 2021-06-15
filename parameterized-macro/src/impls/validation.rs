@@ -1,6 +1,6 @@
 #![cfg(not(matrix))]
 
-use linked_hash_map::LinkedHashMap;
+use indexmap::IndexMap;
 use std::fmt::Display;
 
 /// Checks whether all inputs have equal length.
@@ -12,7 +12,7 @@ use std::fmt::Display;
 /// the first test shall define `"a"` and `1`, the second `"b"` and 2, but for the third case,
 /// a value for `v` exists (namely `"c"`), however no value to substitute for `w` exists.
 /// Therefore, no fully valid set of tests can be constructed from the parameterized definition.
-pub(crate) fn check_all_input_lengths(map: &LinkedHashMap<syn::Ident, Vec<syn::Expr>>) -> usize {
+pub(crate) fn check_all_input_lengths(map: &IndexMap<syn::Ident, Vec<syn::Expr>>) -> usize {
     let mut arguments: Option<usize> = None;
     for (ident, values) in map.iter() {
         match arguments {
