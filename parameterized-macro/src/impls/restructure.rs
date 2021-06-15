@@ -1,7 +1,6 @@
 use indexmap::IndexMap;
-use proc_macro2::TokenStream;
+use proc_macro2::{TokenStream, Span};
 use quote::quote;
-use syn::spanned::Spanned;
 
 pub(crate) fn impl_value_source(
     argument_lists: super::AttributeArgList,
@@ -78,7 +77,7 @@ pub(crate) fn impl_value_source(
             .collect(); // end of construction of let bindings
 
         let ident = format!("case_{}", i);
-        let ident = syn::Ident::new(ident.as_str(), func.span()); // fixme: span
+        let ident = syn::Ident::new(ident.as_str(), Span::call_site());
 
         quote! {
             #[test]
