@@ -25,11 +25,11 @@ pub(crate) fn impl_value_source(
         .iter()
         .map(|v| {
             (
-                v.id.clone(),
-                v.param_args.iter().cloned().collect::<Vec<syn::Expr>>(),
+                &v.id,
+                v.param_args.iter().collect::<Vec<&syn::Expr>>(),
             )
         })
-        .collect::<IndexMap<syn::Ident, Vec<syn::Expr>>>();
+        .collect::<IndexMap<&syn::Ident, Vec<&syn::Expr>>>();
 
     // interlude: ensure that the parameterized test definition contain unique identifiers.
     if values.len() != identifiers_len {
