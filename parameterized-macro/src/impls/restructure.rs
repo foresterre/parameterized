@@ -1,113 +1,104 @@
-use indexmap::IndexMap;
-use proc_macro2::{TokenStream, Span};
-use quote::quote;
-use crate::impls::AttributeArgList;
+use proc_macro2::{Span, TokenStream};
 
-pub(crate) fn impl_value_source(
+use crate::impls::map::TestCases;
+use crate::impls::{map, AttributeArgList};
+
+pub(crate) fn generate_test_cases(
     argument_lists: super::AttributeArgList,
     func: syn::ItemFn,
 ) -> proc_macro::TokenStream {
-    let name = &func.sig.ident;
-    let vis = &func.vis;
-    let func_args = &func.sig.inputs;
-    let body_block = &func.block;
-    let attributes = &func.attrs;
-
-    let mod_name = format!("{}", name);
-    let mod_ident = syn::Ident::new(mod_name.as_str(), name.span());
-
-    // For each provided argument (per parameter), we create a let bind at the start of the fn:
-    // * `let #ident: #ty = #expr;`
-    // After that we append the body of the test function
+    // Map the given arguments by their identifier
     let values = into_argument_map(&argument_lists);
+    let args = function_arguments(&func);
+    let amount_of_test_cases = values.amount_of_test_cases().unwrap_or_default();
 
-    let amount_of_test_cases = super::validation::check_all_input_lengths(&values);
+    let generated_test_cases =
+        (0..amount_of_test_cases).map(|i| generate_test_case(args.as_slice(), &values, i, &func));
 
-    let test_case_fns = (0..amount_of_test_cases).map(|i| {
-        let binds: Vec<TokenStream> = func_args
-            .iter()
-            .map(|fn_arg| {
-                if let syn::FnArg::Typed(syn::PatType { pat, ty, .. }) = fn_arg {
-                    if let syn::Pat::Ident(syn::PatIdent { ident, .. }) = pat.as_ref() {
-                        // Now we use to identifier from the function signature to get the
-                        // current (i) test case we are creating.
-                        //
-                        // If we have `#[parameterized(chars = { 'a', 'b' }, ints = { 1, 2 }]
-                        // and the function signature is `fn my_test(chars: char, ints: i8) -> ()`
-                        //
-                        // then we will two test cases.
-                        //
-                        // The first test case will substitute (for your mental image,
-                        // because in reality it will create let bindings at the start of the
-                        // generated test function) the first expressions from the identified
-                        // argument lists, in this case from `chars`, `a` and from `ints`, `1`.
-                        // The second test case does the same
-                        if let Some(exprs) = values.get(ident) {
-                            let expr = &exprs[i];
-
-                            // A let binding is constructed so we can type check the given expression.
-                            return quote! {
-                                let #ident: #ty = #expr;
-                            };
-                        } else {
-                            panic!("[parameterized-macro] error: No matching values found for '{}'", ident);
-                        }
-                    } else {
-                        panic!("[parameterized-macro] error: Function parameter identifier was not found");
-                    }
-                } else {
-                    panic!("[parameterized-macro] error: Given function argument should be typed");
-                }
-            })
-            .collect(); // end of construction of let bindings
-
-        let ident = format!("case_{}", i);
-        let ident = syn::Ident::new(ident.as_str(), Span::call_site());
-
-        quote! {
-            #[test]
-            #(#attributes)*
-            #vis fn #ident() {
-                #(#binds)*
-
-                #body_block
-            }
-        }
-    });
-
-    // we need to include `use super::*` since we put the test cases in a new module
-    let token_stream = quote! {
-        #[cfg(test)]
-        #vis mod #mod_ident {
-            use super::*;
-
-            #(#test_case_fns)*
-        }
-    };
-
-    token_stream.into()
+    generate_module(generated_test_cases, &func).into()
 }
 
 /// Transform an AttributeArgList into an ordered map which orders its
 /// elements by insertion order (assuming no elements will be removed).
 /// The returned map contains (identifier, argument expression list) pairs.
-fn into_argument_map(arguments: &AttributeArgList) -> IndexMap<&syn::Ident, Vec<&syn::Expr>> {
+fn into_argument_map(arguments: &AttributeArgList) -> map::TestCases<'_> {
     arguments
         .args
         .iter()
-        .map(|v| {
-            (
-                &v.id,
-                v.param_args.iter().collect::<Vec<&syn::Expr>>(),
-            )
-        })
-        .fold(IndexMap::new(), |mut acc, (id, exprs)| {
-            if let None = acc.get(id) {
-                acc.insert(id, exprs);
-            } else {
-                panic!("[parameterized-macro] error: found duplicate entry for '{}'", id);
-            }
+        .fold(map::TestCases::empty(), |mut acc, args| {
+            let identifier = &args.id;
+            let exprs = args.param_args.iter().collect::<Vec<&syn::Expr>>();
+
+            acc.insert(identifier, exprs);
 
             acc
         })
+}
+
+type FnArgPair<'ctx> = (&'ctx syn::Ident, &'ctx Box<syn::Type>);
+
+/// Returns the vector of all typed parameter pairs for a given function.
+fn function_arguments(f: &syn::ItemFn) -> Vec<FnArgPair> {
+    f.sig.inputs.iter().map(|fn_arg| {
+        match fn_arg {
+            syn::FnArg::Typed(syn::PatType { pat, ty, .. }) => match pat.as_ref() {
+                syn::Pat::Ident(syn::PatIdent { ident, .. }) => (ident, ty) ,
+                _ => panic!("[parameterized-macro] error: No identifier found for test case")
+            }
+            _ => panic!("[parameterized-macro] error: Unexpected receiver found in test case function arguments")
+        }
+
+    }).collect::<Vec<_>>()
+}
+
+fn generate_module<I: Iterator<Item = TokenStream>>(test_cases: I, f: &syn::ItemFn) -> TokenStream {
+    let name = &f.sig.ident;
+    let vis = &f.vis;
+    let mod_ident = syn::Ident::new(&format!("{}", name), name.span());
+
+    // we need to include `use super::*` since we put the test cases in a new module
+    quote::quote! {
+        #[cfg(test)]
+        #vis mod #mod_ident {
+            use super::*;
+
+            #(#test_cases)*
+        }
+    }
+}
+
+/// Generate a single test case from the attribute inputs.
+fn generate_test_case(
+    parameters: &[FnArgPair],
+    test_cases: &TestCases,
+    i: usize,
+    f: &syn::ItemFn,
+) -> TokenStream {
+    let attributes = f.attrs.as_slice();
+    let vis = &f.vis;
+    let body_block = &f.block;
+    let identifier = syn::Ident::new(&format!("case_{}", i), Span::call_site());
+
+    // Construction let bindings for all parameters
+    let bindings = parameters.iter().map(|(identifier, ty)| {
+        let expr = test_cases.get(identifier, i);
+
+        generate_binding(identifier, ty, expr)
+    });
+
+    quote::quote! {
+        #[test]
+        #(#attributes)*
+        #vis fn #identifier() {
+            #(#bindings)*
+
+            #body_block
+        }
+    }
+}
+
+fn generate_binding(identifier: &syn::Ident, ty: &syn::Type, expr: &syn::Expr) -> TokenStream {
+    quote::quote! {
+        let #identifier: #ty = #expr;
+    }
 }

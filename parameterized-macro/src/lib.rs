@@ -19,5 +19,5 @@ fn impl_macro(
     let argument_lists = parse_macro_input!(args as impls::AttributeArgList);
     let func = parse_macro_input!(input as ::syn::ItemFn);
 
-    impls::restructure::impl_value_source(argument_lists, func)
+    impls::restructure::generate_test_cases(argument_lists, func)
 }

@@ -20,6 +20,7 @@ fn individual_cases() {
     t.pass("tests/ok/17_trailing_comma2.rs");
     t.pass("tests/ok/18_trailing_comma3.rs");
     t.pass("tests/ok/19_trailing_comma4.rs");
+    t.pass("tests/ok/20_empty.rs");
 
     t.compile_fail("tests/fail/id_already_defined.rs");
     t.compile_fail("tests/fail/inequal_amount_of_arg.rs");
@@ -28,4 +29,7 @@ fn individual_cases() {
     t.compile_fail("tests/fail/not_a_fn.rs");
     t.compile_fail("tests/fail/on_visibility.rs");
     t.compile_fail("tests/fail/square_brackets.rs");
+    t.compile_fail("tests/fail/no_argument.rs");
+    t.compile_fail("tests/fail/no_param.rs");
+    t.compile_fail("tests/fail/no_param_nr2.rs");
 }
