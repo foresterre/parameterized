@@ -1,6 +1,7 @@
 use indexmap::IndexMap;
 use proc_macro2::{TokenStream, Span};
 use quote::quote;
+use crate::impls::AttributeArgList;
 
 pub(crate) fn impl_value_source(
     argument_lists: super::AttributeArgList,
@@ -18,23 +19,7 @@ pub(crate) fn impl_value_source(
     // For each provided argument (per parameter), we create a let bind at the start of the fn:
     // * `let #ident: #ty = #expr;`
     // After that we append the body of the test function
-    let identifiers_len = argument_lists.args.len();
-
-    let values = argument_lists
-        .args
-        .iter()
-        .map(|v| {
-            (
-                &v.id,
-                v.param_args.iter().collect::<Vec<&syn::Expr>>(),
-            )
-        })
-        .collect::<IndexMap<&syn::Ident, Vec<&syn::Expr>>>();
-
-    // interlude: ensure that the parameterized test definition contain unique identifiers.
-    if values.len() != identifiers_len {
-        panic!("[parameterized-macro] error: Duplicate identifier(s) found. Please use unique parameter names.")
-    }
+    let values = into_argument_map(&argument_lists);
 
     let amount_of_test_cases = super::validation::check_all_input_lengths(&values);
 
@@ -101,4 +86,28 @@ pub(crate) fn impl_value_source(
     };
 
     token_stream.into()
+}
+
+/// Transform an AttributeArgList into an ordered map which orders its
+/// elements by insertion order (assuming no elements will be removed).
+/// The returned map contains (identifier, argument expression list) pairs.
+fn into_argument_map(arguments: &AttributeArgList) -> IndexMap<&syn::Ident, Vec<&syn::Expr>> {
+    arguments
+        .args
+        .iter()
+        .map(|v| {
+            (
+                &v.id,
+                v.param_args.iter().collect::<Vec<&syn::Expr>>(),
+            )
+        })
+        .fold(IndexMap::new(), |mut acc, (id, exprs)| {
+            if let None = acc.get(id) {
+                acc.insert(id, exprs);
+            } else {
+                panic!("[parameterized-macro] error: found duplicate entry for '{}'", id);
+            }
+
+            acc
+        })
 }
