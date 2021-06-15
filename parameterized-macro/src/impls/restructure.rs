@@ -1,4 +1,4 @@
-use linked_hash_map::LinkedHashMap;
+use indexmap::IndexMap;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::spanned::Spanned;
@@ -30,7 +30,7 @@ pub(crate) fn impl_value_source(
                 v.param_args.iter().cloned().collect::<Vec<syn::Expr>>(),
             )
         })
-        .collect::<LinkedHashMap<syn::Ident, Vec<syn::Expr>>>();
+        .collect::<IndexMap<syn::Ident, Vec<syn::Expr>>>();
 
     // interlude: ensure that the parameterized test definition contain unique identifiers.
     if values.len() != identifiers_len {
