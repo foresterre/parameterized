@@ -10,16 +10,20 @@ on:
     branches:
       - master
       - main
+      - staging # for Bors
+      - trying # for Bors
+  schedule:
+    - cron: '00 04 * * *'
 jobs:
   test:
     name: test
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        build: [pinned, stable, macos, win-gnu, win-msvc] # excluded: nightly
+        build: [msrv, stable, beta, macos, win-gnu, win-msvc] # excluded: nightly
         include:
           # pinned rust version :: ubuntu
-          - build: pinned
+          - build: msrv
             os: ubuntu-18.04
             rust: 1.36.0
 
@@ -27,6 +31,11 @@ jobs:
           - build: stable
             os: ubuntu-latest
             rust: stable
+
+          # latest rust beta :: ubuntu
+          - build: beta
+            os: ubuntu-latest
+            rust: beta
 
           # latest rust nightly :: ubuntu
           # fixme: span of error position is different on nightly
@@ -51,7 +60,7 @@ jobs:
 
 
     steps:
-      - name: checkout.repo
+      - name: checkout_repo
         uses: actions/checkout@v2
       - name: install_rust
         uses: actions-rs/toolchain@v1
@@ -59,21 +68,19 @@ jobs:
           toolchain: ${{ matrix.rust }}
           override: true
           profile: minimal
-
-      - name: build.workspace
+      - name: build_all
         uses: actions-rs/cargo@v1
         with:
           command: build
           args: --verbose --all
-
-      - name: test.workspace.default_features
+      - name: test_all
         uses: actions-rs/cargo@v1
         with:
           command: test
           args: --verbose --all
 
   rustfmt:
-    name: pipeline.rustfmt
+    name: rustfmt
     runs-on: ubuntu-18.04
     steps:
       - name: checkout.repo
@@ -90,20 +97,54 @@ jobs:
           cargo fmt --all -- --check
 
   clippy:
-    name: pipeline.clippy
+    name: clippy
     runs-on: ubuntu-18.04
     steps:
-      - name: checkout.repo
+      - name: checkout_repo
         uses: actions/checkout@v2
-      - name: install.rust
+      - name: install_rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           override: true
           profile: minimal
           components: clippy
-      - name: check.clippy
+      - name: run_clippy
         uses: actions-rs/clippy-check@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           args: --workspace
+
+  cargo_deny:
+    name: cargo_deny
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        checks:
+          - advisories
+          - bans licenses sources
+
+    continue-on-error: ${{ matrix.checks == 'advisories' }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: EmbarkStudios/cargo-deny-action@v1
+
+  msrv:
+    name: msrv
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: checkout_repo
+        uses: actions/checkout@v2
+      - name: install_rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          profile: minimal
+      - name: install_cargo_msrv
+        run: cargo install cargo-msrv
+      - name: version_of_cargo_msrv
+        run: cargo msrv --version # as of writing: 0.7.0 (required for --verify)
+      - name: run_cargo_msrv
+        run: cargo msrv --verify --ignore-lockfile --output-format json
