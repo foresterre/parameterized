@@ -7,6 +7,8 @@ When defining a parameterized test case, the `#[parameterized(...)]` attribute s
 
 This crate was inspired by JUnit `@ParameterizedTest`.
 
+If you consider using parameterized, you can also check out [Yare](https://github.com/foresterre/yare) which is a variation on `parameterized`, which pivots the  parameters, so you can define your own identifier for cases. Alternatively, there is [Sif](https://github.com/foresterre/sif) where each case can be defined by a separate `#[case(...)`] attribute. 
+
 ### Examples:
 
 Additional examples can be found at the <a href="https://github.com/foresterre/parameterized-examples">parameterized-examples repository</a>,
