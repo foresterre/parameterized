@@ -50,7 +50,7 @@ impl<'node> TestCases<'node> {
         }
 
         // Only insert if the id does not yet exist
-        if let None = self.map.get(id) {
+        if self.map.get(id).is_none() {
             self.map.insert(id, exprs);
         } else {
             panic!(
