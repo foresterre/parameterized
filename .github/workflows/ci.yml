@@ -20,7 +20,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        build: [msrv, stable, beta, macos, win-gnu, win-msvc] # excluded: nightly
+        build: [msrv, stable, macos, win-gnu, win-msvc] # excluded: beta, nightly
         include:
           # pinned rust version :: ubuntu
           - build: msrv
@@ -33,9 +33,10 @@ jobs:
             rust: stable
 
           # latest rust beta :: ubuntu
-          - build: beta
-            os: ubuntu-latest
-            rust: beta
+          # beta has different compiler output than stable, making integration tests fail on beta, while they succeed on stable
+          # - build: beta
+          #   os: ubuntu-latest
+          #   rust: beta
 
           # latest rust nightly :: ubuntu
           # fixme: span of error position is different on nightly
