@@ -28,7 +28,13 @@ fn individual_cases() {
     t.compile_fail("tests/fail/input_param_order_in_err_message.rs");
     t.compile_fail("tests/fail/not_a_fn.rs");
     t.compile_fail("tests/fail/on_visibility.rs");
+
+    #[cfg(not(feature = "square-brackets-old-error-message"))]
     t.compile_fail("tests/fail/square_brackets.rs");
+
+    #[cfg(feature = "square-brackets-old-error-message")]
+    t.compile_fail("tests/fail/square_brackets_old_error_message.rs");
+
     t.compile_fail("tests/fail/no_argument.rs");
     t.compile_fail("tests/fail/no_param.rs");
     t.compile_fail("tests/fail/no_param_nr2.rs");

@@ -19,3 +19,7 @@ parameterized-macro = { path = "parameterized-macro", version = "=0.3.1" }
 
 [workspace]
 members = ["parameterized-macro"]
+
+[features]
+# not semver protected
+square-brackets-old-error-message = ["parameterized-macro/square-brackets-old-error-message"]
