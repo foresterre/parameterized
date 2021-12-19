@@ -34,3 +34,7 @@ default-features = false
 
 [dev-dependencies]
 trybuild = "1.0"
+
+[features]
+# not semver protected
+square-brackets-old-error-message = []

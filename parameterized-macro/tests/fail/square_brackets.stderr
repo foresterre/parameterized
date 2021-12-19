@@ -1,5 +1,5 @@
 error: expected curly braces
- --> $DIR/square_brackets.rs:3:21
+ --> tests/fail/square_brackets.rs:3:21
   |
 3 | #[parameterized(v = [1, 2, 3])]
-  |                     ^^^^^^^^^
+  |                     ^

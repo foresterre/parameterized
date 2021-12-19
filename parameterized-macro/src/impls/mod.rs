@@ -30,8 +30,8 @@ impl Parse for AttributeArgList {
 #[derive(Clone)]
 pub(crate) struct IdentifiedArgList {
     pub(crate) id: syn::Ident,
-    assignment: Token![=],
-    braces: syn::token::Brace,
+    _assignment: Token![=],
+    _braces: syn::token::Brace,
     pub(crate) param_args: Punctuated<syn::Expr, Token![,]>,
 }
 
@@ -51,8 +51,8 @@ impl Parse for IdentifiedArgList {
 
         Ok(IdentifiedArgList {
             id: input.parse()?,
-            assignment: input.parse()?,
-            braces: braced!(content in input),
+            _assignment: input.parse()?,
+            _braces: braced!(content in input),
             param_args: Punctuated::parse_terminated(&content)?,
         })
     }
