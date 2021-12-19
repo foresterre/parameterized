@@ -81,7 +81,7 @@ jobs:
           command: test
           args: --verbose --all
 
-      - name: test_all_msrv # The MSRV is an older Rust compiler version, which produces slightly different error messages
+      - name: test_all # The MSRV is an older Rust compiler version, which produces slightly different error messages
         if: ${{ matrix.build == "msrv" }}
         uses: actions-rs/cargo@v1
         with:
