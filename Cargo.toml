@@ -1,6 +1,6 @@
 [package]
 name = "parameterized"
-version = "0.3.1"
+version = "1.0.0"
 authors = ["Martijn Gribnau <garm@ilumeo.com>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
@@ -15,7 +15,7 @@ categories = ["development-tools", "development-tools::testing"]
 msrv = "1.36.0"
 
 [dependencies]
-parameterized-macro = { path = "parameterized-macro", version = "=0.3.1" }
+parameterized-macro = { path = "parameterized-macro", version = "1" }
 
 [workspace]
 members = ["parameterized-macro"]
