@@ -6,11 +6,20 @@ which provides an attribute macro, to be used for parameterized testing.
 If you found an issue, have a suggestion or want to provide feedback or insights, please feel free to open an issue on
 the [issue tracker](https://github.com/foresterre/parameterized/issues), or open a topic in the [discussions section](https://github.com/foresterre/parameterized/discussions).
 
+## [1.0.1] - 2022-11-09
+
+### Changed
+
+* Updated MSRV to Rust `1.38`
+* Updated parameterized-macro to `1.0.1`
+
+[1.0.1]: https://github.com/foresterre/parameterized/releases/tag/v1.0.1
+
 ## [1.0.0] - 2022-05-02
 
 ### Changed
 
-* MSRV is now `1.38`
+* Updated MSRV to Rust `1.36`
 
 [1.0.0]: https://github.com/foresterre/parameterized/releases/tag/v1.0.0
 
