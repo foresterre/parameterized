@@ -1,5 +1,4 @@
 status = [
-    "test (msrv)",
     "test (stable)",
     "test (macos)",
     "test (win-gnu)",

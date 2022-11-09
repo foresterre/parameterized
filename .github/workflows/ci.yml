@@ -20,13 +20,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        build: [msrv, stable, macos, win-gnu, win-msvc] # excluded: beta, nightly
+        build: [stable, macos, win-gnu, win-msvc] # excluded: beta, nightly
         include:
-          # pinned rust version :: ubuntu
-          - build: msrv
-            os: ubuntu-18.04
-            rust: 1.36.0
-
           # latest rust stable :: ubuntu
           - build: stable
             os: ubuntu-latest
@@ -137,23 +132,3 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: EmbarkStudios/cargo-deny-action@v1
-
-  msrv:
-    name: msrv
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    steps:
-      - name: checkout_repo
-        uses: actions/checkout@v2
-      - name: install_rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-          profile: minimal
-      - name: install_cargo_msrv
-        run: cargo install cargo-msrv
-      - name: version_of_cargo_msrv
-        run: cargo msrv --version # as of writing: 0.7.0 (required for --verify)
-      - name: run_cargo_msrv
-        run: cargo msrv --verify --ignore-lockfile --output-format json
