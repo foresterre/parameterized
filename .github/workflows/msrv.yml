@@ -17,20 +17,22 @@ jobs:
     steps:
       - name: checkout_repo
         uses: actions/checkout@v2
+      
       - name: install_rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-          profile: minimal
+        uses: dtolnay/rust-toolchain@stable
+      
       - name: install_cargo_msrv
         run: cargo install cargo-msrv --no-default-features
+      
       - name: version_of_cargo_msrv
         run: cargo msrv --version
+      
       - name: use_msrv_lock_file
         run: cp Cargo.lock.msrv Cargo.lock
+      
       - name: run_cargo_msrv
         run: cargo msrv --output-format json verify -- cargo check
+      
       - name: run_cargo_msrv_on_verify_failure
         if: ${{ failure() }}
         run: cargo msrv --output-format json -- cargo check
