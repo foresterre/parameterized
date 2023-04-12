@@ -17,11 +17,11 @@ jobs:
       matrix:
         build: [ubuntu, macos, win-gnu, win-msvc] # excluded: beta, nightly
         include:
-          - build: stable
+          - build: ubuntu
             os: ubuntu-latest
             rust: stable
 
-          - build: ubuntu
+          - build: macos
             os: macOS-latest
             rust: stable
 
@@ -47,6 +47,3 @@ jobs:
       - name: test_all
         if: matrix.build != 'msrv'
         run: cargo test --verbose --all
-
-      - name: test_all # The MSRV is an older Rust compiler version, which produces slightly different error messages
-        run: cargo test --verbose --all --features square-brackets-old-error-message
