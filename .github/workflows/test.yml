@@ -14,14 +14,15 @@ jobs:
     name: test
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         build: [ubuntu, macos, win-gnu, win-msvc]
         include:
-          - build: stable
+          - build: ubuntu
             os: ubuntu-latest
             rust: stable
 
-          - build: ubuntu
+          - build: macos
             os: macOS-latest
             rust: stable
 
@@ -34,7 +35,7 @@ jobs:
             rust: stable
 
     steps:
-      - name: checkout_repo
+      - name: checkout_repository
         uses: actions/checkout@v3
 
       - name: install_rust
@@ -42,8 +43,11 @@ jobs:
         with:
           toolchain: ${{ matrix.rust }}
 
-      - name: build_all
-        run: cargo build --verbose --all
+      - name: fetch
+        run: cargo fetch --verbose
+
+      - name: build
+        run: cargo build --verbose
 
       - name: test_all
         run: cargo test --verbose --all
