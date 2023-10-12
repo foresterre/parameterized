@@ -1,7 +1,7 @@
 use proc_macro2::{Span, TokenStream};
 
-use crate::impls::map::TestCases;
-use crate::impls::{AttributeArgList};
+use crate::parser::AttributeArgList;
+use crate::test_cases::TestCases;
 
 pub(crate) fn generate_test_cases(
     argument_lists: AttributeArgList,
