@@ -84,5 +84,17 @@ mod tests {
 
             Ok(())
         }
+
+        #[pm(v = {
+            Ok(1),
+            // Err("Oh noes".to_string()), // Implements Termination, and reports the exit code: ExitCode::FAILURE, causing the test to fail! Uncomment line to see the result
+        })]
+        fn readme_example(v: Result<u32, String>) -> Result<(), String> {
+            let value = v?; // Can use the question mark operator here, since return type is Result, which implements the Termination trait
+
+            assert_eq!(value, 1);
+
+            Ok(())
+        }
     }
 }
