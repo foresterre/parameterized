@@ -6,6 +6,34 @@ which provides an attribute macro, to be used for parameterized testing.
 If you found an issue, have a suggestion or want to provide feedback or insights, please feel free to open an issue on
 the [issue tracker](https://github.com/foresterre/parameterized/issues), or open a topic in the [discussions section](https://github.com/foresterre/parameterized/discussions).
 
+## [1.1.0] - 2023-10-13
+
+### Added
+
+* `parameterized-macro` now supports test signatures with any return type supported by the test macro, not just the unit type
+
+**Example**
+
+```rust
+use parameterized::parameterized;
+
+#[parameterized(v = { Ok(1), Err("Oh noes".to_string()) })]
+fn my_test(v: Result<u32, String>) -> Result<(), String> {
+    let value = v?; // Can use the question mark operator here, since return type is Result, which implements the Termination trait
+    
+    assert_eq!(value, 1);
+    
+    Ok(())
+}
+```
+
+### Changed
+
+* Updated MSRV to Rust `1.56`
+* Updated parameterized-macro to `1.1.0`
+
+[1.1.0]: https://github.com/foresterre/parameterized/releases/tag/v1.1.0
+
 ## [1.0.1] - 2022-11-09
 
 ### Changed
