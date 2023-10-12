@@ -70,4 +70,19 @@ mod tests {
             input.unwrap()
         }
     }
+
+    mod result {
+        use super::*;
+
+        ide!();
+
+        #[pm(input = { 2, 3, 4 }, output = { 2, 3, 4 })]
+        fn ok(input: i32, output: i32) -> Result<(), ()> {
+            let result = Ok(input)?;
+
+            assert_eq!(result, output);
+
+            Ok(())
+        }
+    }
 }

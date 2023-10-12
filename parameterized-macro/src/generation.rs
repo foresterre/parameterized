@@ -78,6 +78,7 @@ fn generate_test_case(
     let vis = &f.vis;
     let body_block = &f.block;
     let identifier = syn::Ident::new(&format!("case_{}", i), Span::call_site());
+    let return_type = &f.sig.output;
 
     // Construction let bindings for all parameters
     let bindings = parameters.iter().map(|(identifier, ty)| {
@@ -89,7 +90,7 @@ fn generate_test_case(
     quote::quote! {
         #[test]
         #(#attributes)*
-        #vis fn #identifier() {
+        #vis fn #identifier() #return_type {
             #(#bindings)*
 
             #body_block
