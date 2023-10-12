@@ -1,6 +1,3 @@
-pub(crate) mod map;
-pub(crate) mod restructure;
-
 use std::fmt::Formatter;
 use syn::braced;
 use syn::parse::{Parse, ParseStream, Result};
