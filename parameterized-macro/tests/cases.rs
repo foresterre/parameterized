@@ -21,6 +21,9 @@ fn individual_cases() {
     t.pass("tests/ok/18_trailing_comma3.rs");
     t.pass("tests/ok/19_trailing_comma4.rs");
     t.pass("tests/ok/20_empty.rs");
+    t.pass("tests/ok/21_result.rs");
+    t.pass("tests/ok/22_try_operator.rs");
+    t.pass("tests/ok/23_return_not_impl_try.rs");
 
     t.compile_fail("tests/fail/id_already_defined.rs");
     t.compile_fail("tests/fail/inequal_amount_of_arg.rs");
