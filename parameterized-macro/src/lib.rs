@@ -21,3 +21,11 @@ fn impl_macro(
 
     impls::restructure::generate_test_cases(argument_lists, func)
 }
+
+#[proc_macro_attribute]
+pub fn parameterized_macro(
+    args: ::proc_macro::TokenStream,
+    input: ::proc_macro::TokenStream,
+) -> ::proc_macro::TokenStream {
+    todo!()
+}

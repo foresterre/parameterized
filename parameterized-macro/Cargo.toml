@@ -34,6 +34,7 @@ default-features = false
 
 [dev-dependencies]
 trybuild = "1.0"
+tokio = { version = "1", default-features = false, features = ["macros"] }
 
 [features]
 # not semver protected
