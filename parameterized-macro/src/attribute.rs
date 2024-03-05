@@ -1,7 +1,9 @@
+use quote::quote;
 use std::fmt::Formatter;
-use syn::braced;
 use syn::parse::{Parse, ParseStream, Result};
 use syn::punctuated::Punctuated;
+use syn::token::{Async, Const, Unsafe};
+use syn::{braced, Attribute, Block, ItemFn, Meta, ReturnType, Visibility};
 
 /// An ordered list of attribute arguments, which consists of (id, param-args) pairs.
 #[derive(Clone)]
@@ -55,5 +57,80 @@ impl Parse for ParameterList {
             _braces: braced!(content in input),
             param_args: Punctuated::parse_terminated(&content)?,
         })
+    }
+}
+
+// TODO: add to parse, code gen of ParameterizedList
+pub enum MacroAttribute {
+    /// A `#[parameterized_macro(..)]` attribute
+    ///
+    /// Example usage: `#[parameterized_macro(tokio::test)]`
+    UseTestMacro(Meta),
+    /// An attribute unrelated to this crate; to be retained after the generation step
+    Unrelated(Attribute),
+}
+
+impl MacroAttribute {
+    pub fn is_use_test_macro(&self) -> bool {
+        matches!(self, Self::UseTestMacro(_))
+    }
+
+    pub fn quoted(&self) -> proc_macro2::TokenStream {
+        match self {
+            Self::UseTestMacro(meta) => quote!(#meta),
+            Self::Unrelated(attr) => quote!(#attr),
+        }
+    }
+}
+
+pub struct Fn {
+    pub attrs: Vec<MacroAttribute>,
+    pub item_fn: ItemFn,
+}
+
+impl Parse for Fn {
+    fn parse(input: ParseStream) -> Result<Self> {
+        let attrs = input
+            .call(Attribute::parse_outer)?
+            .into_iter()
+            .map(|attr| {
+                if attr.path().is_ident("parameterized_macro") {
+                    attr.parse_args::<Meta>().map(MacroAttribute::UseTestMacro)
+                } else {
+                    Ok(MacroAttribute::Unrelated(attr))
+                }
+            })
+            .collect::<Result<Vec<MacroAttribute>>>()?;
+
+        Ok(Self {
+            attrs,
+            item_fn: input.parse()?,
+        })
+    }
+}
+
+impl Fn {
+    pub fn constness(&self) -> Option<&Const> {
+        self.item_fn.sig.constness.as_ref()
+    }
+
+    pub fn asyncness(&self) -> Option<&Async> {
+        self.item_fn.sig.asyncness.as_ref()
+    }
+
+    pub fn unsafety(&self) -> Option<&Unsafe> {
+        self.item_fn.sig.unsafety.as_ref()
+    }
+
+    pub fn visibility(&self) -> &Visibility {
+        &self.item_fn.vis
+    }
+
+    pub fn return_type(&self) -> &ReturnType {
+        &self.item_fn.sig.output
+    }
+
+    pub fn body(&self) -> &Block {
+        &self.item_fn.block
     }
 }

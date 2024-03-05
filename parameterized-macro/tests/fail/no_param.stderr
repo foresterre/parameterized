@@ -4,4 +4,4 @@ error: custom attribute panicked
 3 | #[parameterized(y = { 1, 2, 3 })]
   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   |
-  = help: message: [parameterized-macro] error: Unable to find value for parameter 'x' (case #0)
+  = help: message: parameterized-macro: error: Unable to find value for parameter 'x' (case #0)

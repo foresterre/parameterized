@@ -10,16 +10,17 @@ repository = "https://github.com/foresterre/parameterized"
 readme = "README.md"
 keywords = ["parameterized", "parametrized", "test", "unit-test", "junit"]
 categories = ["development-tools", "development-tools::testing"]
-
-[package.metadata]
-msrv = "1.38.0"
-
-[dependencies]
-parameterized-macro = { path = "parameterized-macro", version = "1" }
-
-[workspace]
-members = ["parameterized-macro"]
+rust-version = "1.56"
 
 [features]
 # not semver protected
 square-brackets-old-error-message = ["parameterized-macro/square-brackets-old-error-message"]
+
+[workspace]
+members = ["parameterized-macro"]
+
+[dependencies]
+parameterized-macro = { path = "parameterized-macro", version = "1" }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["full"] }

@@ -32,7 +32,7 @@ impl<'node> TestCases<'node> {
         //
         match self.amount_of_test_cases {
             Some(amount) if amount != expressions => panic!(
-                "[parameterized-macro] error: Each test-case parameter should have an equal amount of values passed to it.\n\
+                "parameterized-macro error: Each test-case parameter should have an equal amount of values passed to it.\n\
                     Expected {} arguments for '{}', but got: {}", amount, id, expressions,
             ),
             Some(_) => {}
@@ -44,7 +44,7 @@ impl<'node> TestCases<'node> {
         //
         if expressions != self.unwrap_amount_of_test_cases() {
             panic!(
-                "[parameterized-macro] error: Each test-case parameter should have an equal amount of values passed to it.\n\
+                "parameterized-macro: error: Each test-case parameter should have an equal amount of values passed to it.\n\
                     Expected {} arguments for '{}', but got: {}", self.unwrap_amount_of_test_cases(), id, expressions,
             );
         }
@@ -54,7 +54,7 @@ impl<'node> TestCases<'node> {
             self.map.insert(id, exprs);
         } else {
             panic!(
-                "[parameterized-macro] error: found duplicate entry for '{}'",
+                "parameterized-macro: error: found duplicate entry for '{}'",
                 id
             );
         }
@@ -65,7 +65,7 @@ impl<'node> TestCases<'node> {
             exprs[ith]
         } else {
             panic!(
-                "[parameterized-macro] error: Unable to find value for parameter '{}' (case #{})",
+                "parameterized-macro: error: Unable to find value for parameter '{}' (case #{})",
                 id, ith
             );
         }

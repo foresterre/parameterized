@@ -19,7 +19,7 @@ fn impl_macro(
     input: ::proc_macro::TokenStream,
 ) -> ::proc_macro::TokenStream {
     let argument_lists = parse_macro_input!(args as attribute::ParameterizedList);
-    let func = parse_macro_input!(input as ::syn::ItemFn);
+    let func = parse_macro_input!(input as attribute::Fn);
 
-    generation::generate_test_cases(argument_lists, func)
+    generation::generate(argument_lists, func)
 }
