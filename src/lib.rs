@@ -1,5 +1,4 @@
-//! For docs see [here](https://docs.rs/crate/parameterized) :).
-// FIXME: add rustdoc
+#![doc = include_str!("../README.md")]
 
 pub use parameterized_macro::parameterized;
 
@@ -25,7 +24,7 @@ macro_rules! ide {
 #[cfg(test)]
 mod tests {
     use crate::ide;
-    use crate::parameterized as pm;
+    use crate::parameterized;
 
     fn add5<T: Into<u32>>(component: T) -> u32 {
         component.into() + 5
@@ -36,7 +35,7 @@ mod tests {
 
         ide!();
 
-        #[pm(input = {
+        #[parameterized(input = {
             0, 1, 2
         }, expected = {
             5, 6, 7
@@ -51,7 +50,7 @@ mod tests {
 
         ide!();
 
-        #[pm(input = { 2, 3, 4 }, output = { 4, 6, 8 })]
+        #[parameterized(input = { 2, 3, 4 }, output = { 4, 6, 8 })]
         fn test_times2(input: i32, output: i32) {
             let times2 = |receiver: i32| receiver * 2;
 
@@ -64,37 +63,50 @@ mod tests {
 
         ide!();
 
-        #[pm(input = { None, None, None })]
+        #[parameterized(input = { None, None, None })]
         #[should_panic]
         fn numbers(input: Option<()>) {
             input.unwrap()
         }
     }
 
-    mod result {
+    mod fn_signatures {
         use super::*;
 
         ide!();
 
-        #[pm(input = { 2, 3, 4 }, output = { 2, 3, 4 })]
-        fn ok(input: i32, output: i32) -> Result<(), ()> {
-            let result = Ok(input)?;
-
-            assert_eq!(result, output);
-
-            Ok(())
+        #[parameterized(_input = { 0, 1, 2 })]
+        const fn constness(_input: u8) {
+            assert!(true)
         }
 
-        #[pm(v = {
-            Ok(1),
-            // Err("Oh noes".to_string()), // Implements Termination, and reports the exit code: ExitCode::FAILURE, causing the test to fail! Uncomment line to see the result
-        })]
-        fn readme_example(v: Result<u32, String>) -> Result<(), String> {
-            let value = v?; // Can use the question mark operator here, since return type is Result, which implements the Termination trait
+        #[parameterized(input = { true, true, true })]
+        #[parameterized_macro(tokio::test)]
+        async fn asyncness(input: bool) {
+            assert!(input)
+        }
 
-            assert_eq!(value, 1);
+        #[parameterized(_input = { 0, 1, 2 })]
+        const fn return_type(_input: u8) -> () {
+            assert!(true)
+        }
+    }
 
-            Ok(())
+    mod custom_test_attribute {
+        use super::*;
+
+        ide!();
+
+        #[parameterized(input = { true, true, true })]
+        #[parameterized_macro(tokio::test)]
+        async fn tokio_simple_meta(input: bool) {
+            assert!(input)
+        }
+
+        #[parameterized(input = { true, true, true })]
+        #[parameterized_macro(tokio::test(flavor = "multi_thread", worker_threads = 1))]
+        async fn tokio_complex_meta(input: bool) {
+            assert!(input)
         }
     }
 }

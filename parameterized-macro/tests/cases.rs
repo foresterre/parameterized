@@ -21,9 +21,8 @@ fn individual_cases() {
     t.pass("tests/ok/18_trailing_comma3.rs");
     t.pass("tests/ok/19_trailing_comma4.rs");
     t.pass("tests/ok/20_empty.rs");
-    t.pass("tests/ok/21_result.rs");
-    t.pass("tests/ok/22_try_operator.rs");
-    t.pass("tests/ok/23_return_not_impl_try.rs");
+    t.pass("tests/ok/21_custom_test_attribute.rs");
+    t.pass("tests/ok/22_custom_test_attribute_complex_meta.rs");
 
     t.compile_fail("tests/fail/id_already_defined.rs");
     t.compile_fail("tests/fail/inequal_amount_of_arg.rs");
@@ -31,6 +30,7 @@ fn individual_cases() {
     t.compile_fail("tests/fail/input_param_order_in_err_message.rs");
     t.compile_fail("tests/fail/not_a_fn.rs");
     t.compile_fail("tests/fail/on_visibility.rs");
+    t.compile_fail("tests/fail/multiple_custom_test_attributes.rs");
 
     #[cfg(not(feature = "square-brackets-old-error-message"))]
     t.compile_fail("tests/fail/square_brackets.rs");
