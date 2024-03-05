@@ -22,6 +22,14 @@ the [discussions section](https://github.com/foresterre/parameterized/discussion
 
 [2.0.0]: https://github.com/foresterre/parameterized/releases/tag/v2.0.0
 
+## [1.1.0] - 2023-10-23
+
+### Added
+
+* Add option to use return type in tests
+
+[1.1.0]: https://github.com/foresterre/parameterized/releases/tag/v1.1.0
+
 ## [1.0.1] - 2022-11-09
 
 ### Changed
