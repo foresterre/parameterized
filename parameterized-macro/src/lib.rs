@@ -2,7 +2,9 @@
 extern crate syn;
 extern crate proc_macro;
 
-mod impls;
+mod attribute;
+mod generation;
+mod tests;
 
 #[proc_macro_attribute]
 pub fn parameterized(
@@ -16,16 +18,8 @@ fn impl_macro(
     args: ::proc_macro::TokenStream,
     input: ::proc_macro::TokenStream,
 ) -> ::proc_macro::TokenStream {
-    let argument_lists = parse_macro_input!(args as impls::AttributeArgList);
+    let argument_lists = parse_macro_input!(args as attribute::ParameterizedList);
     let func = parse_macro_input!(input as ::syn::ItemFn);
 
-    impls::restructure::generate_test_cases(argument_lists, func)
-}
-
-#[proc_macro_attribute]
-pub fn parameterized_macro(
-    args: ::proc_macro::TokenStream,
-    input: ::proc_macro::TokenStream,
-) -> ::proc_macro::TokenStream {
-    todo!()
+    generation::generate_test_cases(argument_lists, func)
 }

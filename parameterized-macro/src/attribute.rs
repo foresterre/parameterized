@@ -1,6 +1,3 @@
-pub(crate) mod map;
-pub(crate) mod restructure;
-
 use std::fmt::Formatter;
 use syn::braced;
 use syn::parse::{Parse, ParseStream, Result};
@@ -8,40 +5,43 @@ use syn::punctuated::Punctuated;
 
 /// An ordered list of attribute arguments, which consists of (id, param-args) pairs.
 #[derive(Clone)]
-pub(crate) struct AttributeArgList {
-    pub(crate) args: Punctuated<IdentifiedArgList, Token![,]>,
+pub struct ParameterizedList {
+    pub args: Punctuated<ParameterList, Token![,]>,
 }
 
-impl Parse for AttributeArgList {
+impl Parse for ParameterizedList {
     /// This part parses
     /// It uses IdentifiedArgList.parse() for each inner argument.
     ///
     /// ['IdentifiedArgList.parse ']: struct.IdentifiedArgList
     fn parse(input: ParseStream) -> Result<Self> {
-        Ok(AttributeArgList {
+        Ok(ParameterizedList {
             args: Punctuated::parse_terminated(input)?,
         })
     }
 }
 
 /// A single (id, param-args) pair which consists of:
-///   id: identifier for the list
-///   param_args: ordered list arguments formatted using curly-braced list syntax, i.e. "{ 3, 4, 5 }"
+///   - id: identifier for the list
+///   - param_args: ordered list arguments formatted using curly-braced list syntax, i.e. "{ 3, 4, 5 }"
+///
+/// For example:
+/// `parameter_name = { 3, 4, 5}`
 #[derive(Clone)]
-pub(crate) struct IdentifiedArgList {
-    pub(crate) id: syn::Ident,
+pub struct ParameterList {
+    pub id: syn::Ident,
     _assignment: Token![=],
     _braces: syn::token::Brace,
-    pub(crate) param_args: Punctuated<syn::Expr, Token![,]>,
+    pub param_args: Punctuated<syn::Expr, Token![,]>,
 }
 
-impl std::fmt::Debug for IdentifiedArgList {
+impl std::fmt::Debug for ParameterList {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        f.write_str(&format!("IdentifiedArgList(id = {:?})", self.id))
+        f.write_str(&format!("ParameterList(id = {:?})", self.id))
     }
 }
 
-impl Parse for IdentifiedArgList {
+impl Parse for ParameterList {
     // parts:
     //
     // v = { a, b, c }
@@ -49,7 +49,7 @@ impl Parse for IdentifiedArgList {
     fn parse(input: ParseStream) -> Result<Self> {
         let content;
 
-        Ok(IdentifiedArgList {
+        Ok(ParameterList {
             id: input.parse()?,
             _assignment: input.parse()?,
             _braces: braced!(content in input),

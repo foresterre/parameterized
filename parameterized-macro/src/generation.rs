@@ -1,10 +1,10 @@
 use proc_macro2::{Span, TokenStream};
 
-use crate::impls::map::TestCases;
-use crate::impls::{map, AttributeArgList};
+use crate::attribute::ParameterizedList;
+use crate::tests::TestCases;
 
-pub(crate) fn generate_test_cases(
-    argument_lists: super::AttributeArgList,
+pub fn generate_test_cases(
+    argument_lists: ParameterizedList,
     func: syn::ItemFn,
 ) -> proc_macro::TokenStream {
     // Map the given arguments by their identifier
@@ -21,11 +21,11 @@ pub(crate) fn generate_test_cases(
 /// Transform an AttributeArgList into an ordered map which orders its
 /// elements by insertion order (assuming no elements will be removed).
 /// The returned map contains (identifier, argument expression list) pairs.
-fn into_argument_map(arguments: &AttributeArgList) -> map::TestCases<'_> {
+fn into_argument_map(arguments: &ParameterizedList) -> TestCases<'_> {
     arguments
         .args
         .iter()
-        .fold(map::TestCases::empty(), |mut acc, args| {
+        .fold(TestCases::empty(), |mut acc, args| {
             let identifier = &args.id;
             let exprs = args.param_args.iter().collect::<Vec<&syn::Expr>>();
 
