@@ -18,7 +18,7 @@ the [discussions section](https://github.com/foresterre/parameterized/discussion
 
 ### Changed
 
-* MSRV is now `1.56`
+* MSRV is now `1.63`
 
 [2.0.0]: https://github.com/foresterre/parameterized/releases/tag/v2.0.0
 
