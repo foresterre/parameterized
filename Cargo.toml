@@ -1,6 +1,6 @@
 [package]
 name = "parameterized"
-version = "1.1.0"
+version = "2.0.0"
 authors = ["Martijn Gribnau <garm@ilumeo.com>"]
 edition = "2021"
 license = "MIT OR Apache-2.0"
@@ -20,7 +20,7 @@ square-brackets-old-error-message = ["parameterized-macro/square-brackets-old-er
 members = ["parameterized-macro"]
 
 [dependencies]
-parameterized-macro = { path = "parameterized-macro", version = "1" }
+parameterized-macro = { path = "parameterized-macro", version = "2" }
 
 [dev-dependencies]
 tokio = { version = "1", features = ["full"] }
