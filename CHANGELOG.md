@@ -9,13 +9,14 @@ the [discussions section](https://github.com/foresterre/parameterized/discussion
 
 ## [2.0.0] - 2024-03-05
 
-# Added
+### Added
 
 * Added support for custom test macros (e.g., `#[tokio::test]` instead of the default `#[test]`) by specifying the 
   `#[parameterized_macro(...)]` attribute.
-
 * `#[parameterized]` macro now parses and regenerates optional `const`, `async`, `unsafe` and return type items for `fn`
   definitions.
+
+[2.0.0]: https://github.com/foresterre/parameterized/releases/tag/v2.0.0
 
 ## [1.0.1] - 2022-11-09
 
