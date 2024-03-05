@@ -1,6 +1,6 @@
 [package]
 name = "parameterized-macro"
-version = "1.1.0"
+version = "1.0.1"
 authors = ["Martijn Gribnau <garm@ilumeo.com>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
@@ -25,7 +25,7 @@ proc-macro2 = "1.0.24"
 quote = "1.0.8"
 
 [dependencies.syn]
-version = "2.0.38"
+version = "2.0.52"
 features = ["full"]
 
 [dependencies.indexmap]

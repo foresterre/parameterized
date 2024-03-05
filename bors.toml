@@ -4,8 +4,8 @@ status = [
     "licenses_and_advisories (bans licenses sources)",
     "linter",
     "msrv",
-    "test (ubuntu)",
-    "test (macos)",
-    "test (win-gnu)",
-    "test (win-msvc)",
+    "test (ubuntu-stable)",
+    "test (macos-stable)",
+    "test (win-gnu-stable)",
+    "test (win-msvc-stable)",
 ]
