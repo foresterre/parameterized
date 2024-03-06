@@ -29,7 +29,7 @@ version = "2.0.52"
 features = ["full"]
 
 [dependencies.indexmap]
-version = "1.6.2"
+version = "2.2.5"
 default-features = false
 
 [dev-dependencies]
