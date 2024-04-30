@@ -1,5 +1,11 @@
 error[E0433]: failed to resolve: could not find `my_test` in `a`
-  --> $DIR/on_visibility.rs:20:12
+  --> tests/fail/on_visibility.rs:20:12
    |
 20 |         a::my_test::case_0(); // this isn't ok
    |            ^^^^^^^ could not find `my_test` in `a`
+   |
+note: found an item that was configured out
+  --> tests/fail/on_visibility.rs:8:25
+   |
+8  |     pub(in crate::b) fn my_test(v: Option<i32>) {}
+   |                         ^^^^^^^
