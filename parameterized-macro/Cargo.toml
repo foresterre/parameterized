@@ -21,16 +21,11 @@ name = "tests"
 path = "tests/cases.rs"
 
 [dependencies]
+fnv = "1.0.7"
+indexmap = { version = "2.12.0", default-features = false }
 proc-macro2 = "1.0.24"
 quote = "1.0.8"
-
-[dependencies.syn]
-version = "2.0.52"
-features = ["full"]
-
-[dependencies.indexmap]
-version = "1.6.2"
-default-features = false
+syn = { version = "2.0.52", features = ["full"] }
 
 [dev-dependencies]
 trybuild = "1.0.113"

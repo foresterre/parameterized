@@ -1,8 +1,10 @@
 use indexmap::IndexMap;
 use std::fmt::Formatter;
 
+type FnvIndexMap<K, V> = IndexMap<K, V, fnv::FnvBuildHasher>;
+
 pub struct TestCases<'node> {
-    map: IndexMap<&'node syn::Ident, Vec<&'node syn::Expr>>,
+    map: FnvIndexMap<&'node syn::Ident, Vec<&'node syn::Expr>>,
     amount_of_test_cases: Option<usize>,
 }
 
@@ -21,7 +23,7 @@ impl std::fmt::Debug for TestCases<'_> {
 impl<'node> TestCases<'node> {
     pub fn empty() -> Self {
         Self {
-            map: IndexMap::new(),
+            map: IndexMap::default(),
             amount_of_test_cases: None,
         }
     }
