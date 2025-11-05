@@ -32,10 +32,10 @@ fn individual_cases() {
     t.compile_fail("tests/fail/on_visibility.rs");
     t.compile_fail("tests/fail/multiple_custom_test_attributes.rs");
 
-    #[cfg(not(feature = "square-brackets-old-error-message"))]
+    #[cfg(not(feature = "__unstable_square-brackets-old-error-message"))]
     t.compile_fail("tests/fail/square_brackets.rs");
 
-    #[cfg(feature = "square-brackets-old-error-message")]
+    #[cfg(feature = "__unstable_square-brackets-old-error-message")]
     t.compile_fail("tests/fail/square_brackets_old_error_message.rs");
 
     t.compile_fail("tests/fail/no_argument.rs");
