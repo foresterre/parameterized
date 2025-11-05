@@ -10,7 +10,7 @@ repository = "https://github.com/foresterre/parameterized"
 readme = "README.md"
 keywords = ["parameterized", "parametrized", "test", "unit-test", "junit"]
 categories = ["development-tools", "development-tools::testing"]
-rust-version = "1.63"
+rust-version = "1.68"
 
 [features]
 # not semver protected
