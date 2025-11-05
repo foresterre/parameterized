@@ -7,5 +7,7 @@ error[E0433]: failed to resolve: could not find `my_test` in `a`
 note: found an item that was configured out
   --> tests/fail/on_visibility.rs:8:25
    |
-8  |     pub(in crate::b) fn my_test(v: Option<i32>) {}
+ 7 |     #[parameterized(v = { Some(-1), None })]
+   |     ---------------------------------------- the item is gated here
+ 8 |     pub(in crate::b) fn my_test(v: Option<i32>) {}
    |                         ^^^^^^^

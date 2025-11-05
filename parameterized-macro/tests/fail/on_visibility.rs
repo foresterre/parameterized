@@ -4,7 +4,7 @@
 extern crate parameterized_macro;
 
 pub mod a {
-    #[parameterized(v = { Some(- 1), None })]
+    #[parameterized(v = { Some(-1), None })]
     pub(in crate::b) fn my_test(v: Option<i32>) {}
 }
 

@@ -35,7 +35,7 @@ fn into_argument_map(arguments: &ParameterizedList) -> TestCases<'_> {
 type FnArgPair<'ctx> = (&'ctx syn::Ident, &'ctx Box<syn::Type>);
 
 /// Returns the vector of all typed parameter pairs for a given function.
-fn function_arguments(f: &Fn) -> Vec<FnArgPair> {
+fn function_arguments(f: &Fn) -> Vec<FnArgPair<'_>> {
     f.item_fn.sig.inputs.iter().map(|fn_arg| {
         match fn_arg {
             syn::FnArg::Typed(syn::PatType { pat, ty, .. }) => match pat.as_ref() {

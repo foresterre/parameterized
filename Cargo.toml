@@ -14,7 +14,7 @@ rust-version = "1.63"
 
 [features]
 # not semver protected
-square-brackets-old-error-message = ["parameterized-macro/square-brackets-old-error-message"]
+__unstable_square-brackets-old-error-message = ["parameterized-macro/__unstable_square-brackets-old-error-message"]
 
 [workspace]
 members = ["parameterized-macro"]
