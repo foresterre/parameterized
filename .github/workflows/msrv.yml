@@ -33,6 +33,13 @@ jobs:
       - name: use_msrv_lock_file
         run: cp Cargo.lock.msrv Cargo.lock
 
+      - name: run_cargo_msrv_for_macro
+        run: cargo msrv verify --manifest-path ./parameterized-macro/Cargo.toml --output-format json -- cargo check --locked
+
+      - name: run_cargo_msrv_on_verify_failure_for_macro
+        if: ${{ failure() }}
+        run: cargo msrv find --manifest-path ./parameterized-macro/Cargo.toml --output-format json -- cargo check --locked
+
       - name: run_cargo_msrv
         run: cargo msrv verify --output-format json -- cargo check --locked
 
