@@ -7,8 +7,6 @@ on:
       - main
       - staging # for Bors
       - trying # for Bors
-  schedule:
-    - cron: '00 05 * * *'
 jobs:
   test:
     name: test
