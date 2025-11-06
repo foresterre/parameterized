@@ -22,7 +22,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: install_cargo_msrv
-        run: cargo install --version 0.16.0-beta.20 --no-default-features cargo-msrv
+        run: cargo install --no-default-features cargo-msrv
 
       - name: version_of_cargo_msrv
         run: cargo msrv --version
