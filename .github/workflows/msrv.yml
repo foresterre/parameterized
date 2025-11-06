@@ -34,8 +34,8 @@ jobs:
         run: cp Cargo.lock.msrv Cargo.lock
 
       - name: run_cargo_msrv
-        run: cargo msrv --output-format json verify -- cargo check --frozen
+        run: cargo msrv verify --output-format json -- cargo check --locked
 
       - name: run_cargo_msrv_on_verify_failure
         if: ${{ failure() }}
-        run: cargo msrv --output-format json -- cargo check --frozen
+        run: cargo msrv find --output-format json -- cargo check --locked
