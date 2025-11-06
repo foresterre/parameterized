@@ -1,6 +1,6 @@
 [package]
 name = "parameterized-macro"
-version = "2.0.0"
+version = "2.1.0"
 authors = ["Martijn Gribnau <garm@ilumeo.com>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
@@ -10,6 +10,7 @@ repository = "https://github.com/foresterre/parameterized"
 readme = "readme.md"
 keywords = ["parameterized", "attribute", "test", "unit-test", "junit"]
 categories = ["development-tools", "development-tools::testing"]
+rust-version = "1.68"
 
 autotests = false
 
