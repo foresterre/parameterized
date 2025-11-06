@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate syn;
-extern crate proc_macro;
 extern crate core;
+extern crate proc_macro;
 
 mod attribute;
 mod generation;
