@@ -7,6 +7,15 @@ If you found an issue, have a suggestion or want to provide feedback or insights
 the [issue tracker](https://github.com/foresterre/parameterized/issues), or open a topic in
 the [discussions section](https://github.com/foresterre/parameterized/discussions).
 
+## [2.1.0] - 2025-11-07
+
+### Changed
+
+* Updated MSRV to Rust `1.68`
+* Updated parameterized-macro to `3.0.0`
+
+[2.1.0]: https://github.com/foresterre/parameterized/releases/tag/v2.1.0
+
 ## [2.0.0] - 2024-03-05
 
 ### Added
