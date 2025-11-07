@@ -20,7 +20,7 @@ __unstable_square-brackets-old-error-message = ["parameterized-macro/__unstable_
 members = ["parameterized-macro"]
 
 [dependencies]
-parameterized-macro = { path = "parameterized-macro", version = "2" }
+parameterized-macro = { path = "parameterized-macro", version = "~3.0.0" }
 
 [dev-dependencies]
 tokio = { version = "1", features = ["full"] }
