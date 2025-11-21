@@ -24,7 +24,7 @@ path = "tests/cases.rs"
 [dependencies]
 fnv = "1.0.7"
 # from indexmap 2.12 the MSRV is 1.82; unless indexmap needs security updates, a lower MSRV is preferable, since parameterized doesn't need it
-indexmap = { version = "~2.11.4", default-features = false }
+indexmap = { version = "~2.12.1", default-features = false }
 proc-macro2 = "1.0.24"
 quote = "1.0.8"
 syn = { version = "2.0.52", features = ["full"] }
